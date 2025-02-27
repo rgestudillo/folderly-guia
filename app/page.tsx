@@ -1,101 +1,131 @@
-import Image from "next/image";
+"use client"
+
+import type React from "react"
+
+import { useState, useEffect, useRef } from "react"
+import { useRouter } from "next/navigation"
+import Image from "next/image"
+import { Search, Leaf } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { loadGoogleMapsApi } from "@/utils/loadGoogleMapsApi"
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [projectData, setProjectData] = useState({
+    idea: "",
+    location: "",
+    coordinates: null as { lat: number; lng: number } | null,
+  })
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  useEffect(() => {
+    loadGoogleMapsApi().then(() => initAutocomplete())
+  }, [])
+
+  const initAutocomplete = () => {
+    if (!inputRef.current) return
+
+    autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, { types: ["geocode"] })
+    autocompleteRef.current.addListener("place_changed", handlePlaceSelect)
+  }
+
+  const handlePlaceSelect = () => {
+    if (!autocompleteRef.current) return
+
+    const place = autocompleteRef.current.getPlace()
+    if (!place.geometry) {
+      console.log("No details available for input: '" + place.name + "'")
+      return
+    }
+
+    setProjectData((prev) => ({
+      ...prev,
+      location: place.formatted_address || place.name || "",
+      coordinates: {
+        lat: place.geometry?.location.lat() || 0,
+        lng: place.geometry?.location.lng() || 0,
+      },
+    }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!projectData.idea || !projectData.location) return
+
+    setIsLoading(true)
+
+    try {
+      sessionStorage.setItem("projectData", JSON.stringify(projectData))
+      router.push(`/sustainability`)
+    } catch (error) {
+      console.error("Error saving project data:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] relative bg-gradient-to-b from-green-50 to-blue-50">
+      <div className="absolute inset-0 z-0">
+        <Image src="/map-background.jpg" alt="Map Background" fill className="object-cover opacity-30" priority />
+      </div>
+
+      <div className="bg-white bg-opacity-90 rounded-lg shadow-lg p-8 md:p-12 max-w-3xl w-full mx-4 z-10">
+        <h1 className="text-4xl md:text-5xl font-bold text-center mb-6 text-green-800">Sustainable Project Planner</h1>
+
+        <p className="text-lg md:text-xl text-center mb-8 text-green-700">
+          Plan your sustainable project and assess environmental risks in your area.
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="project-idea" className="text-lg font-medium text-green-700">
+              Project Idea
+            </Label>
+            <div className="relative">
+              <Leaf className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600" />
+              <Input
+                id="project-idea"
+                placeholder="e.g., Community Garden in Central Park"
+                value={projectData.idea}
+                onChange={(e) => setProjectData((prev) => ({ ...prev, idea: e.target.value }))}
+                className="pl-10 border-green-300 focus:border-green-500 focus:ring-green-500"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="project-location" className="text-lg font-medium text-green-700">
+              Project Location
+            </Label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600" />
+              <Input
+                ref={inputRef}
+                id="project-location"
+                placeholder="Search Location"
+                value={projectData.location}
+                onChange={(e) => setProjectData((prev) => ({ ...prev, location: e.target.value }))}
+                className="pl-10 border-green-300 focus:border-green-500 focus:ring-green-500"
+              />
+            </div>
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
+            disabled={isLoading}
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            {isLoading ? "Loading..." : "Plan Your Sustainable Project"}
+          </Button>
+        </form>
+      </div>
     </div>
-  );
+  )
 }
+
