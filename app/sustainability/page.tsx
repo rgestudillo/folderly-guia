@@ -8,6 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import GoogleMapComponent from "@/components/google-map";
 import { ResultsModal } from "@/components/results-modal";
 import { LoadingAnimation } from "@/components/loading-animation";
+import { ProjectData } from "@/types/project";
 
 export default function SustainabilityPage() {
   const [projectData, setProjectData] = useState({
@@ -18,7 +19,9 @@ export default function SustainabilityPage() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
-  const [aggregatedData, setAggregatedData] = useState<any>(null);
+  const [aggregatedData, setAggregatedData] = useState<ProjectData | null>(
+    null
+  );
   const [isLoadingResults, setIsLoadingResults] = useState(false);
   const router = useRouter();
 
@@ -52,12 +55,13 @@ export default function SustainabilityPage() {
             latitude: projectData.coordinates.lat,
             longitude: projectData.coordinates.lng,
           },
+          project_name: projectData.idea,
         }),
       });
       if (!response.ok) {
         throw new Error("Failed to fetch aggregated data");
       }
-      const data = await response.json();
+      const data: ProjectData = await response.json();
       console.log(data);
       setAggregatedData(data);
       setShowResults(true);
@@ -125,8 +129,7 @@ export default function SustainabilityPage() {
 
       {showResults && aggregatedData && (
         <ResultsModal
-          projectData={projectData}
-          aggregatedData={aggregatedData}
+          projectData={aggregatedData}
           onClose={() => setShowResults(false)}
         />
       )}
