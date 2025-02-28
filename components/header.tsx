@@ -1,58 +1,41 @@
-import Link from "next/link"
-import { Leaf, Menu } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import Link from "next/link";
+import { Leaf, Github, Star } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
   return (
-    <header className="bg-gradient-to-r from-green-600 to-green-700 text-white shadow-md">
-      <div className="container mx-auto px-4 py-4">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-50 backdrop-blur-sm bg-white/90 dark:bg-gray-900/90">
+      <div className="container mx-auto px-6 py-5">
         <div className="flex justify-between items-center">
-          <Link href="/" className="flex items-center space-x-2 text-2xl font-bold">
-            <Leaf className="h-8 w-8" />
-            <span>{process.env.NEXT_PUBLIC_APP_NAME}</span>
+          <Link
+            href="/"
+            className="flex items-center space-x-3 text-xl font-bold text-gray-800 dark:text-white transition-colors hover:text-green-600 dark:hover:text-green-400"
+          >
+            <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-2.5 rounded-lg shadow-sm">
+              <Leaf className="h-5 w-5 text-white" />
+            </div>
+            <span className="tracking-tight">
+              {process.env.NEXT_PUBLIC_APP_NAME || "Folderly Guia"}
+            </span>
           </Link>
-          <nav className="hidden md:flex space-x-6">
-            <Link href="/" className="hover:text-green-200 transition-colors">
-              Home
+
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
+
+            <Link
+              href="https://github.com/rgestudillo/folderly-guia"
+              target="_blank"
+              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full py-2 px-4 transition-all duration-300 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700"
+            >
+              <Github className="h-4 w-4" />
+              <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+              <span className="font-medium text-xs hidden sm:inline">
+                Star on GitHub
+              </span>
             </Link>
-            <Link href="/about" className="hover:text-green-200 transition-colors">
-              About
-            </Link>
-            <Link href="/projects" className="hover:text-green-200 transition-colors">
-              Projects
-            </Link>
-            <Link href="/contact" className="hover:text-green-200 transition-colors">
-              Contact
-            </Link>
-          </nav>
-          <div className="md:hidden">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link href="/">Home</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/about">About</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/projects">Projects</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/contact">Contact</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
       </div>
     </header>
-  )
+  );
 }
-
