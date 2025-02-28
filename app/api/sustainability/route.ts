@@ -1,9 +1,11 @@
 // app/api/air-quality/route.ts
 
 import { NextResponse } from 'next/server';
-import { handleAirQualityPost } from '@/lib/air-quality'; // Adjust the import path as necessary
+import { handleAirQualityPost } from '@/lib/air-quality';
+import { handleSolarGet } from '@/lib/solar';
 
 export async function POST(request: Request) {
+  try {
     // Parse the JSON body from the incoming request.
     const body = await request.json();
 
@@ -17,12 +19,23 @@ export async function POST(request: Request) {
 
     const { latitude, longitude } = body.location;
 
-    const airQualityData = await handleAirQualityPost(latitude, longitude);
-    // const sustainabilityData = await handleSustainabilityPost(latitude, longitude);
-    // const combinedData = {
-    //   airQuality: airQualityData,
-    //   sustainability: sustainabilityData
-    // };
+    // Execute both API calls concurrently.
+    const [airQualityData, solarData] = await Promise.all([
+      handleAirQualityPost(latitude, longitude),
+      handleSolarGet(latitude, longitude)
+    ]);
 
-    return NextResponse.json(airQualityData); 
+    // Aggregate the results into a single JSON response.
+    const aggregatedData = {
+      airQuality: airQualityData,
+      solar: solarData,
+    };
+
+    return NextResponse.json(aggregatedData);
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: 'Server error: ' + error.message },
+      { status: 500 }
+    );
+  }
 }
