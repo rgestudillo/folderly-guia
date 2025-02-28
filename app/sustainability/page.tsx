@@ -1,12 +1,13 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Slider } from "@/components/ui/slider"
-import { ArrowLeft } from "lucide-react"
-import GoogleMapComponent from "@/components/google-map"
-import { ResultsModal } from "@/components/results-modal"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { ArrowLeft } from "lucide-react";
+import GoogleMapComponent from "@/components/google-map";
+import { ResultsModal } from "@/components/results-modal";
+import { LoadingAnimation } from "@/components/loading-animation";
 
 export default function SustainabilityPage() {
   const [projectData, setProjectData] = useState({
@@ -14,59 +15,68 @@ export default function SustainabilityPage() {
     location: "",
     coordinates: { lat: 0, lng: 0 },
     radius: 1000,
-  })
-  const [isLoading, setIsLoading] = useState(true)
-  const [showResults, setShowResults] = useState(false)
-  const [aggregatedData, setAggregatedData] = useState<any>(null)
-  const router = useRouter()
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [showResults, setShowResults] = useState(false);
+  const [aggregatedData, setAggregatedData] = useState<any>(null);
+  const [isLoadingResults, setIsLoadingResults] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    const savedProjectData = sessionStorage.getItem("projectData")
+    const savedProjectData = sessionStorage.getItem("projectData");
     if (savedProjectData) {
-      const parsedData = JSON.parse(savedProjectData)
-      setProjectData((prev) => ({ ...prev, ...parsedData, radius: 1000 }))
-      setIsLoading(false)
+      const parsedData = JSON.parse(savedProjectData);
+      setProjectData((prev) => ({ ...prev, ...parsedData, radius: 1000 }));
+      setIsLoading(false);
     } else {
-      router.push("/")
+      router.push("/");
     }
-  }, [router])
+  }, [router]);
 
   const handleBackClick = () => {
-    router.push("/")
-  }
+    router.push("/");
+  };
 
   const handleRadiusChange = (value: number[]) => {
-    setProjectData((prev) => ({ ...prev, radius: value[0] }))
-  }
+    setProjectData((prev) => ({ ...prev, radius: value[0] }));
+  };
 
   const handleConfirm = async () => {
-    setShowResults(true)
+    setIsLoadingResults(true);
     try {
-      const response = await fetch('/api/sustainability', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          location: { 
-            latitude: projectData.coordinates.lat, 
-            longitude: projectData.coordinates.lng 
-          } 
+      const response = await fetch("/api/sustainability", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          location: {
+            latitude: projectData.coordinates.lat,
+            longitude: projectData.coordinates.lng,
+          },
         }),
-      })
+      });
       if (!response.ok) {
-        throw new Error('Failed to fetch aggregated data')
+        throw new Error("Failed to fetch aggregated data");
       }
-      const data = await response.json()
-      setAggregatedData(data)
+      const data = await response.json();
+      console.log(data);
+      setAggregatedData(data);
+      setShowResults(true);
     } catch (error) {
-      console.error(error)
+      console.error(error);
       // Handle error appropriately (e.g., show a notification)
+    } finally {
+      setIsLoadingResults(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-gradient-to-b from-green-50 to-blue-50">
       <div className="p-4 bg-white shadow-md z-10">
-        <Button variant="outline" onClick={handleBackClick} className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          onClick={handleBackClick}
+          className="flex items-center gap-2"
+        >
           <ArrowLeft className="h-4 w-4" />
           Back to Project Details
         </Button>
@@ -83,11 +93,15 @@ export default function SustainabilityPage() {
         )}
 
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white p-6 rounded-lg shadow-lg z-10 w-96">
-          <h2 className="text-xl font-bold mb-4 text-green-800">Adjust Project Area</h2>
+          <h2 className="text-xl font-bold mb-4 text-green-800">
+            Adjust Project Area
+          </h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-green-700">Radius</span>
-              <span className="text-sm text-green-600">{(projectData.radius / 1000).toFixed(1)} km</span>
+              <span className="text-sm text-green-600">
+                {(projectData.radius / 1000).toFixed(1)} km
+              </span>
             </div>
             <Slider
               value={[projectData.radius]}
@@ -97,20 +111,25 @@ export default function SustainabilityPage() {
               onValueChange={handleRadiusChange}
               className="w-full"
             />
-            <Button onClick={handleConfirm} className="w-full bg-green-600 hover:bg-green-700 text-white">
+            <Button
+              onClick={handleConfirm}
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
+            >
               Confirm and View Results
             </Button>
           </div>
         </div>
       </div>
 
-      {showResults && (
-        <ResultsModal 
-          projectData={projectData} 
-          aggregatedData={aggregatedData} 
-          onClose={() => setShowResults(false)} 
+      {isLoadingResults && <LoadingAnimation />}
+
+      {showResults && aggregatedData && (
+        <ResultsModal
+          projectData={projectData}
+          aggregatedData={aggregatedData}
+          onClose={() => setShowResults(false)}
         />
       )}
     </div>
-  )
+  );
 }
