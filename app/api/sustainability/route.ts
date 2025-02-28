@@ -3,6 +3,7 @@
 import { NextResponse } from 'next/server';
 import { handleAirQualityPost } from '@/lib/air-quality';
 import { handleSolarGet } from '@/lib/solar';
+import { handleGBIFGet } from '@/lib/gbif';
 
 export async function POST(request: Request) {
   try {
@@ -19,16 +20,18 @@ export async function POST(request: Request) {
 
     const { latitude, longitude } = body.location;
 
-    // Execute both API calls concurrently.
-    const [airQualityData, solarData] = await Promise.all([
+    // Execute all API calls concurrently
+    const [airQualityData, solarData, biodiversityData] = await Promise.all([
       handleAirQualityPost(latitude, longitude),
-      handleSolarGet(latitude, longitude)
+      handleSolarGet(latitude, longitude),
+      handleGBIFGet(latitude, longitude)
     ]);
 
     // Aggregate the results into a single JSON response.
     const aggregatedData = {
       airQuality: airQualityData,
       solar: solarData,
+      biodiversity: biodiversityData,
     };
 
     return NextResponse.json(aggregatedData);
