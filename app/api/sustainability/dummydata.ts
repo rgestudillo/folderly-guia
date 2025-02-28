@@ -7,7 +7,13 @@ import { ProjectData } from "@/types/project";
         latitude: 123, 
         longitude: 123,
         city: "Lapu-Lapu City",
-        country: "Philippines"
+        country: "Philippines",
+        images: [
+          "https://images.unsplash.com/photo-1626668893632-6f3a4466d22f",
+          "https://images.unsplash.com/photo-1566438480900-0609be27a4be",
+          "https://images.unsplash.com/photo-1550236520-7050f3582da0",
+          "https://images.unsplash.com/photo-1518709268805-4e9042af9f23"
+        ]
       },
       sustainability_score: {
         score: 87,

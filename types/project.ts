@@ -5,6 +5,7 @@ export interface ProjectData {
     longitude: number;
     city: string;
     country: string;
+    images: string[];
   };
   sustainability_score: {
     score: number;

@@ -35,8 +35,19 @@ export async function POST(request: Request) {
       biodiversity: biodiversityData,
     };
 
+    // Return dummy data but update it with the actual coordinates from the request
+    const updatedDummyData = {
+      ...dummyData,
+      location: {
+        ...dummyData.location,
+        latitude: latitude,
+        longitude: longitude
+      }
+    };
+
+    //lets return the dummy data for now while we are refining the backend
     //return NextResponse.json(aggregatedData);
-    return NextResponse.json(dummyData);
+    return NextResponse.json(updatedDummyData);
   } catch (error: any) {
     return NextResponse.json(
       { error: 'Server error: ' + error.message },

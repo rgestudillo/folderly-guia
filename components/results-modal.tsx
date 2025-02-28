@@ -20,6 +20,9 @@ import {
   Download,
   Map,
   X,
+  ChevronLeft,
+  ChevronRight,
+  Image as ImageIcon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { ProjectData } from "@/types/project";
@@ -29,10 +32,35 @@ import { RisksTab } from "./results-tabs/risks-tab";
 import { PolicyTab } from "./results-tabs/policy-tab";
 import { FundingTab } from "./results-tabs/funding-tab";
 import { GISTab } from "./results-tabs/gis-tab";
+import Image from "next/image";
 
 interface ResultsModalProps {
   projectData: ProjectData;
   onClose: () => void;
+}
+
+// Simple image gallery component
+function ImageGallery({ images }: { images: string[] }) {
+  if (!images || images.length === 0) return null;
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
+      {images.map((src, index) => (
+        <div key={src} className="relative h-32 rounded-md overflow-hidden">
+          <Image
+            src={src}
+            alt={`Project image ${index + 1}`}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 50vw, 25vw"
+            priority={index === 0}
+            loader={({ src }) => src}
+            unoptimized={true}
+          />
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
@@ -122,6 +150,14 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
                     transition={{ duration: 0.2 }}
                   >
                     <TabsContent value="overview" className="mt-0">
+                      {projectData.location.images &&
+                        projectData.location.images.length > 0 && (
+                          <div className="mb-6">
+                            <ImageGallery
+                              images={projectData.location.images}
+                            />
+                          </div>
+                        )}
                       <OverviewTab projectData={projectData} />
                     </TabsContent>
 
