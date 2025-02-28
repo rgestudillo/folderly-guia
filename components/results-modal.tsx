@@ -33,16 +33,13 @@ import { PolicyTab } from "./results-tabs/policy-tab";
 import { FundingTab } from "./results-tabs/funding-tab";
 import { GISTab } from "./results-tabs/gis-tab";
 import Image from "next/image";
-import { FeasibilityReportPDF } from "@/components/pdf/feasibility-report-pdf";
-import { pdf } from '@react-pdf/renderer';
-import { ProjectReportPDF } from '@/components/pdf/project-report-pdf';
+import { pdf } from "@react-pdf/renderer";
+import { ProjectReportPDF } from "@/components/pdf/project-report-pdf";
 
 interface ResultsModalProps {
   projectData: ProjectData;
   onClose: () => void;
 }
-
-
 
 // Updated image gallery component with carousel
 function ImageGallery({ images }: { images: string[] }) {
@@ -57,9 +54,7 @@ function ImageGallery({ images }: { images: string[] }) {
     setCurrentIndex((prev) => (prev < images.length - 4 ? prev + 1 : prev));
   };
 
-
   return (
-
     <div className="relative mt-4">
       <div className="flex gap-2 overflow-hidden">
         {images.slice(currentIndex, currentIndex + 4).map((src, index) => (
@@ -124,7 +119,7 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
       ).toBlob();
 
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = `${projectData.project_name}-sustainability-report.pdf`;
       document.body.appendChild(link);
@@ -132,7 +127,7 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      console.error("Error generating PDF:", error);
     } finally {
       setIsGeneratingPDF(false);
     }
