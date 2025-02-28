@@ -1,22 +1,8 @@
-// app/api/air-quality/route.ts
 
 import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
+export async function handleAirQualityPost(latitude: number, longitude: number) {
   try {
-    // Parse the JSON body from the incoming request.
-    const body = await request.json();
-
-    // Validate that the required location fields are provided.
-    if (!body.location || body.location.latitude === undefined || body.location.longitude === undefined) {
-      return NextResponse.json(
-        { error: 'Request body must include a "location" object with "latitude" and "longitude" properties.' },
-        { status: 400 }
-      );
-    }
-
-    const { latitude, longitude } = body.location;
-
     // Retrieve your API key from environment variables.
     const googleApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     if (!googleApiKey) {
@@ -76,7 +62,7 @@ export async function POST(request: Request) {
         dominantPollutant: data.indexes[0].dominantPollutant
       } : null;
 
-    return NextResponse.json(parsedData);
+    return parsedData;
   } catch (error: any) {
     return NextResponse.json(
       { error: 'Server error: ' + error.message },
