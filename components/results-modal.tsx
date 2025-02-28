@@ -78,7 +78,7 @@ function ImageGallery({ images }: { images: string[] }) {
         <Button
           variant="ghost"
           size="icon"
-          className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-md rounded-full"
+          className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 shadow-md rounded-full"
           onClick={showPrevious}
         >
           <ChevronLeft className="h-5 w-5" />
@@ -89,7 +89,7 @@ function ImageGallery({ images }: { images: string[] }) {
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-md rounded-full"
+          className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-700 shadow-md rounded-full"
           onClick={showNext}
         >
           <ChevronRight className="h-5 w-5" />
@@ -110,12 +110,12 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
 
   return (
     <Dialog open={true} onOpenChange={() => onClose()}>
-      <DialogContent className="max-w-5xl bg-gradient-to-br from-green-50 to-blue-50 p-0 overflow-hidden border-green-200 flex flex-col max-h-[90vh]">
-        <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-sm border-b border-green-100 p-6">
+      <DialogContent className="max-w-5xl bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-0 overflow-hidden border-green-200 dark:border-green-900 flex flex-col max-h-[90vh]">
+        <div className="sticky top-0 z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-green-100 dark:border-green-900 p-6">
           <DialogHeader className="flex flex-row items-center justify-between">
-            <DialogTitle className="text-3xl font-bold text-green-800 flex items-center gap-3">
-              <div className="bg-green-100 p-2 rounded-full">
-                <Leaf className="h-8 w-8 text-green-600" />
+            <DialogTitle className="text-3xl font-bold text-green-800 dark:text-green-400 flex items-center gap-3">
+              <div className="bg-green-100 dark:bg-green-900 p-2 rounded-full">
+                <Leaf className="h-8 w-8 text-green-600 dark:text-green-400" />
               </div>
               {projectData.project_name}
             </DialogTitle>
@@ -123,7 +123,7 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="rounded-full hover:bg-red-50 hover:text-red-600 transition-colors"
+              className="rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
             >
               <X className="h-5 w-5" />
             </Button>
@@ -136,40 +136,40 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
             onValueChange={setCurrentTab}
             className="space-y-6"
           >
-            <TabsList className="grid w-full grid-cols-6 gap-2 p-1 bg-white/50 backdrop-blur-sm rounded-xl sticky top-0 z-10">
+            <TabsList className="grid w-full grid-cols-6 gap-2 p-1 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl sticky top-0 z-10">
               <TabsTrigger
                 value="overview"
-                className="data-[state=active]:bg-green-100 data-[state=active]:text-green-800"
+                className="data-[state=active]:bg-green-100 dark:data-[state=active]:bg-green-900/50 data-[state=active]:text-green-800 dark:data-[state=active]:text-green-300"
               >
                 Overview
               </TabsTrigger>
               <TabsTrigger
                 value="feasibility"
-                className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800"
+                className="data-[state=active]:bg-blue-100 dark:data-[state=active]:bg-blue-900/50 data-[state=active]:text-blue-800 dark:data-[state=active]:text-blue-300"
               >
                 Feasibility
               </TabsTrigger>
               <TabsTrigger
                 value="risks"
-                className="data-[state=active]:bg-amber-100 data-[state=active]:text-amber-800"
+                className="data-[state=active]:bg-amber-100 dark:data-[state=active]:bg-amber-900/50 data-[state=active]:text-amber-800 dark:data-[state=active]:text-amber-300"
               >
                 Risks
               </TabsTrigger>
               <TabsTrigger
                 value="policy"
-                className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800"
+                className="data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900/50 data-[state=active]:text-purple-800 dark:data-[state=active]:text-purple-300"
               >
                 Policy
               </TabsTrigger>
               <TabsTrigger
                 value="funding"
-                className="data-[state=active]:bg-emerald-100 data-[state=active]:text-emerald-800"
+                className="data-[state=active]:bg-emerald-100 dark:data-[state=active]:bg-emerald-900/50 data-[state=active]:text-emerald-800 dark:data-[state=active]:text-emerald-300"
               >
                 Funding
               </TabsTrigger>
               <TabsTrigger
                 value="gis"
-                className="data-[state=active]:bg-indigo-100 data-[state=active]:text-indigo-800"
+                className="data-[state=active]:bg-indigo-100 dark:data-[state=active]:bg-indigo-900/50 data-[state=active]:text-indigo-800 dark:data-[state=active]:text-indigo-300"
               >
                 GIS Data
               </TabsTrigger>
@@ -185,7 +185,10 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <TabsContent value="overview" className="mt-0">
+                    <TabsContent
+                      value="overview"
+                      className="mt-0 text-gray-800 dark:text-gray-200"
+                    >
                       {projectData.location.images &&
                         projectData.location.images.length > 0 && (
                           <div className="mb-6">
@@ -197,23 +200,38 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
                       <OverviewTab projectData={projectData} />
                     </TabsContent>
 
-                    <TabsContent value="feasibility" className="mt-0">
+                    <TabsContent
+                      value="feasibility"
+                      className="mt-0 text-gray-800 dark:text-gray-200"
+                    >
                       <FeasibilityTab projectData={projectData} />
                     </TabsContent>
 
-                    <TabsContent value="risks" className="mt-0">
+                    <TabsContent
+                      value="risks"
+                      className="mt-0 text-gray-800 dark:text-gray-200"
+                    >
                       <RisksTab projectData={projectData} />
                     </TabsContent>
 
-                    <TabsContent value="policy" className="mt-0">
+                    <TabsContent
+                      value="policy"
+                      className="mt-0 text-gray-800 dark:text-gray-200"
+                    >
                       <PolicyTab projectData={projectData} />
                     </TabsContent>
 
-                    <TabsContent value="funding" className="mt-0">
+                    <TabsContent
+                      value="funding"
+                      className="mt-0 text-gray-800 dark:text-gray-200"
+                    >
                       <FundingTab projectData={projectData} />
                     </TabsContent>
 
-                    <TabsContent value="gis" className="mt-0">
+                    <TabsContent
+                      value="gis"
+                      className="mt-0 text-gray-800 dark:text-gray-200"
+                    >
                       <GISTab projectData={projectData} />
                     </TabsContent>
                   </motion.div>
@@ -223,8 +241,8 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
           </Tabs>
         </div>
 
-        <div className="sticky bottom-0 z-10 bg-white/90 backdrop-blur-sm border-t border-green-100 p-6 flex justify-between items-center">
-          <div className="text-sm text-gray-500 flex items-center">
+        <div className="sticky bottom-0 z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-t border-green-100 dark:border-green-900 p-6 flex justify-between items-center">
+          <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
             <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
             Last updated:{" "}
             {new Date(projectData.last_updated).toLocaleDateString(undefined, {
@@ -239,7 +257,7 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
                 key={report.name}
                 variant="outline"
                 onClick={() => window.open(report.url)}
-                className="flex items-center gap-2 hover:bg-green-50 transition-colors"
+                className="flex items-center gap-2 hover:bg-green-50 dark:hover:bg-green-900/20 dark:border-gray-700 transition-colors"
               >
                 <Download className="h-4 w-4" />
                 {report.name}

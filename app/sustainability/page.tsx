@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { ArrowLeft } from "lucide-react";
 import GoogleMapComponent from "@/components/google-map";
 import { ResultsModal } from "@/components/results-modal";
 import { LoadingAnimation } from "@/components/loading-animation";
@@ -35,10 +34,6 @@ export default function SustainabilityPage() {
       router.push("/");
     }
   }, [router]);
-
-  const handleBackClick = () => {
-    router.push("/");
-  };
 
   const handleRadiusChange = (value: number[]) => {
     setProjectData((prev) => ({ ...prev, radius: value[0] }));
@@ -74,18 +69,7 @@ export default function SustainabilityPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-gradient-to-b from-green-50 to-blue-50">
-      <div className="p-4 bg-white shadow-md z-10">
-        <Button
-          variant="outline"
-          onClick={handleBackClick}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Project Details
-        </Button>
-      </div>
-
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-gradient-to-b from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       <div className="flex-1 relative p-4">
         {!isLoading && (
           <GoogleMapComponent
@@ -96,14 +80,16 @@ export default function SustainabilityPage() {
           />
         )}
 
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white p-6 rounded-lg shadow-lg z-10 w-96">
-          <h2 className="text-xl font-bold mb-4 text-green-800">
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg z-10 w-96 border border-gray-100 dark:border-gray-700">
+          <h2 className="text-xl font-bold mb-4 text-green-800 dark:text-green-400">
             Adjust Project Area
           </h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-green-700">Radius</span>
-              <span className="text-sm text-green-600">
+              <span className="text-sm font-medium text-green-700 dark:text-green-400">
+                Radius
+              </span>
+              <span className="text-sm text-green-600 dark:text-green-400">
                 {(projectData.radius / 1000).toFixed(1)} km
               </span>
             </div>
