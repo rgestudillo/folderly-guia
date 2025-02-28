@@ -33,6 +33,8 @@ import { PolicyTab } from "./results-tabs/policy-tab";
 import { FundingTab } from "./results-tabs/funding-tab";
 import { GISTab } from "./results-tabs/gis-tab";
 import Image from "next/image";
+import { pdf } from "@react-pdf/renderer";
+import { ProjectReportPDF } from "@/components/pdf/project-report-pdf";
 
 interface ResultsModalProps {
   projectData: ProjectData;
@@ -102,11 +104,34 @@ function ImageGallery({ images }: { images: string[] }) {
 export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
   const [currentTab, setCurrentTab] = useState("overview");
   const [mounted, setMounted] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   // Prevent animation on initial render
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleDownloadPDF = async () => {
+    setIsGeneratingPDF(true);
+    try {
+      const blob = await pdf(
+        <ProjectReportPDF projectData={projectData} />
+      ).toBlob();
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${projectData.project_name}-sustainability-report.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   return (
     <Dialog open={true} onOpenChange={() => onClose()}>
@@ -252,17 +277,24 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
             })}
           </div>
           <div className="flex gap-2">
-            {projectData.downloadable_reports.map((report) => (
-              <Button
-                key={report.name}
-                variant="outline"
-                onClick={() => window.open(report.url)}
-                className="flex items-center gap-2 hover:bg-green-50 dark:hover:bg-green-900/20 dark:border-gray-700 transition-colors"
-              >
-                <Download className="h-4 w-4" />
-                {report.name}
-              </Button>
-            ))}
+            <Button
+              variant="outline"
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF}
+              className="flex items-center gap-2 hover:bg-green-50"
+            >
+              {isGeneratingPDF ? (
+                <>
+                  <span className="animate-spin">⏳</span>
+                  Generating Report...
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4" />
+                  Download Full Report
+                </>
+              )}
+            </Button>
             <Button
               onClick={onClose}
               className="bg-green-600 hover:bg-green-700 text-white"
