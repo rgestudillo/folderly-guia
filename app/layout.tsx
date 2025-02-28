@@ -28,7 +28,7 @@ export default function RootLayout({
       >
         <ThemeProvider defaultTheme="system" storageKey="guia-theme">
           <Header />
-          <main className="flex-grow">{children}</main>
+          <main className="flex-grow flex flex-col">{children}</main>
           <Footer />
         </ThemeProvider>
       </body>
