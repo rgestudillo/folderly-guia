@@ -42,7 +42,7 @@ export default function SustainabilityPage() {
   const handleConfirm = async () => {
     setShowResults(true)
     try {
-      const response = await fetch('/api/air-quality', {
+      const response = await fetch('/api/sustainability', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ location: { latitude: projectData.coordinates.lat, longitude: projectData.coordinates.lng } }),
