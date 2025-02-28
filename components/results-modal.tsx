@@ -6,17 +6,31 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
-import { Leaf } from "lucide-react"
+import { Leaf, Cloud, Sun, AlertTriangle } from "lucide-react"
 
 interface ResultsModalProps {
   projectData: {
     idea: string
     location: string
   }
+  airQualityData: any
   onClose: () => void
 }
 
-export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
+const getAirQualityIcon = (category: string) => {
+  switch (category) {
+    case 'Good':
+      return <Sun className="h-6 w-6 text-green-600" />;
+    case 'Moderate':
+      return <Cloud className="h-6 w-6 text-yellow-600" />;
+    case 'Unhealthy':
+      return <AlertTriangle className="h-6 w-6 text-red-600" />;
+    default:
+      return null;
+  }
+};
+
+export function ResultsModal({ projectData, airQualityData, onClose }: ResultsModalProps) {
   const [currentTab, setCurrentTab] = useState("overview")
   const [animationProgress, setAnimationProgress] = useState(0)
 
@@ -89,6 +103,31 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
                   <p>
                     <strong>Location:</strong> {projectData.location}
                   </p>
+                </div>
+
+                <div className="bg-white p-6 rounded-lg shadow-md">
+                  <h3 className="text-xl font-semibold text-green-700 mb-4">Air Quality Data</h3>
+                  {airQualityData ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                        <span className="font-semibold">AQI:</span>
+                        <span>{airQualityData.aqi}</span>
+                      </div>
+                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                        <span className="font-semibold">Category:</span>
+                        <div className="flex items-center">
+                          {getAirQualityIcon(airQualityData.category)}
+                          <span className="ml-2">{airQualityData.category}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                        <span className="font-semibold">Dominant Pollutant:</span>
+                        <span>{airQualityData.dominantPollutant}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <p>No air quality data available.</p>
+                  )}
                 </div>
 
                 <div className="bg-white p-6 rounded-lg shadow-md">

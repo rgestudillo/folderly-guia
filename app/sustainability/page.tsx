@@ -17,6 +17,7 @@ export default function SustainabilityPage() {
   })
   const [isLoading, setIsLoading] = useState(true)
   const [showResults, setShowResults] = useState(false)
+  const [airQualityData, setAirQualityData] = useState(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -38,8 +39,23 @@ export default function SustainabilityPage() {
     setProjectData((prev) => ({ ...prev, radius: value[0] }))
   }
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setShowResults(true)
+    try {
+      const response = await fetch('/api/air-quality', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ location: { latitude: projectData.coordinates.lat, longitude: projectData.coordinates.lng } }),
+      })
+      if (!response.ok) {
+        throw new Error('Failed to fetch air quality data')
+      }
+      const data = await response.json()
+      setAirQualityData(data)
+    } catch (error) {
+      console.error(error)
+      // Handle error appropriately (e.g., show a notification)
+    }
   }
 
   return (
@@ -83,7 +99,7 @@ export default function SustainabilityPage() {
         </div>
       </div>
 
-      {showResults && <ResultsModal projectData={projectData} onClose={() => setShowResults(false)} />}
+      {showResults && <ResultsModal projectData={projectData} airQualityData={airQualityData} onClose={() => setShowResults(false)} />}
     </div>
   )
 }
