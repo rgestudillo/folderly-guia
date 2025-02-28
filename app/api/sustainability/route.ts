@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { handleAirQualityPost } from '@/lib/air-quality';
 import { handleSolarGet } from '@/lib/solar';
 import { handleGBIFGet } from '@/lib/gbif';
+import { getLocationImages } from '@/lib/location-images';
 import { dummyData } from './dummydata';
 
 export async function POST(request: Request) {
@@ -22,11 +23,14 @@ export async function POST(request: Request) {
     const { latitude, longitude } = body.location;
 
     // Execute all API calls concurrently
-    const [airQualityData, solarData, biodiversityData] = await Promise.all([
+    const [airQualityData, solarData, biodiversityData, locationImages] = await Promise.all([
       handleAirQualityPost(latitude, longitude),
       handleSolarGet(latitude, longitude),
-      handleGBIFGet(latitude, longitude)
+      handleGBIFGet(latitude, longitude),
+      getLocationImages(latitude, longitude)
     ]);
+
+    console.log('locationImages', locationImages);
 
     // Aggregate the results into a single JSON response.
     const aggregatedData = {
@@ -36,12 +40,14 @@ export async function POST(request: Request) {
     };
 
     // Return dummy data but update it with the actual coordinates from the request
+    // and include the location images
     const updatedDummyData = {
       ...dummyData,
       location: {
         ...dummyData.location,
         latitude: latitude,
-        longitude: longitude
+        longitude: longitude,
+        images: locationImages
       }
     };
 

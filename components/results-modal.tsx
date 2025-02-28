@@ -39,26 +39,62 @@ interface ResultsModalProps {
   onClose: () => void;
 }
 
-// Simple image gallery component
+// Updated image gallery component with carousel
 function ImageGallery({ images }: { images: string[] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
   if (!images || images.length === 0) return null;
 
+  const showPrevious = () => {
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
+  };
+
+  const showNext = () => {
+    setCurrentIndex((prev) => (prev < images.length - 4 ? prev + 1 : prev));
+  };
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
-      {images.map((src, index) => (
-        <div key={src} className="relative h-32 rounded-md overflow-hidden">
-          <Image
-            src={src}
-            alt={`Project image ${index + 1}`}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 50vw, 25vw"
-            priority={index === 0}
-            loader={({ src }) => src}
-            unoptimized={true}
-          />
-        </div>
-      ))}
+    <div className="relative mt-4">
+      <div className="flex gap-2 overflow-hidden">
+        {images.slice(currentIndex, currentIndex + 4).map((src, index) => (
+          <div
+            key={src}
+            className="relative h-32 w-[calc(25%-6px)] flex-shrink-0 rounded-md overflow-hidden"
+          >
+            <Image
+              src={src}
+              alt={`Project image ${index + 1}`}
+              fill
+              className="object-cover"
+              sizes="25vw"
+              priority={index === 0}
+              loader={({ src }) => src}
+              unoptimized={true}
+            />
+          </div>
+        ))}
+      </div>
+
+      {currentIndex > 0 && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-md rounded-full"
+          onClick={showPrevious}
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </Button>
+      )}
+
+      {currentIndex < images.length - 4 && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-md rounded-full"
+          onClick={showNext}
+        >
+          <ChevronRight className="h-5 w-5" />
+        </Button>
+      )}
     </div>
   );
 }
