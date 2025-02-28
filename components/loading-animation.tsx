@@ -6,7 +6,7 @@ import { Leaf } from "lucide-react";
 export function LoadingAnimation() {
   return (
     <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-xl shadow-xl flex flex-col items-center max-w-md w-full">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl flex flex-col items-center max-w-md w-full">
         <div className="relative mb-6">
           <motion.div
             className="absolute inset-0 rounded-full"
@@ -21,7 +21,7 @@ export function LoadingAnimation() {
               ease: "easeInOut",
             }}
           >
-            <div className="w-full h-full bg-green-100 rounded-full" />
+            <div className="w-full h-full bg-green-100 dark:bg-green-900/30 rounded-full" />
           </motion.div>
 
           <motion.div
@@ -35,15 +35,15 @@ export function LoadingAnimation() {
             }}
             className="relative z-10"
           >
-            <Leaf className="h-12 w-12 text-green-600" />
+            <Leaf className="h-12 w-12 text-green-600 dark:text-green-400" />
           </motion.div>
         </div>
 
-        <h3 className="text-xl font-bold text-green-800 mb-3">
+        <h3 className="text-xl font-bold text-green-800 dark:text-green-300 mb-3">
           Analyzing Sustainability Data
         </h3>
 
-        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden mb-4">
+        <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mb-4">
           <motion.div
             className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
             initial={{ width: "0%" }}
@@ -58,7 +58,7 @@ export function LoadingAnimation() {
         </div>
 
         <motion.p
-          className="text-gray-600 text-center"
+          className="text-gray-600 dark:text-gray-300 text-center"
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{
             duration: 2,
