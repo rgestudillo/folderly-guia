@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { handleAirQualityPost } from '@/lib/air-quality';
 import { handleSolarGet } from '@/lib/solar';
 import { handleGBIFGet } from '@/lib/gbif';
+import { dummyData } from './dummydata';
 
 export async function POST(request: Request) {
   try {
@@ -34,7 +35,8 @@ export async function POST(request: Request) {
       biodiversity: biodiversityData,
     };
 
-    return NextResponse.json(aggregatedData);
+    //return NextResponse.json(aggregatedData);
+    return NextResponse.json(dummyData);
   } catch (error: any) {
     return NextResponse.json(
       { error: 'Server error: ' + error.message },
