@@ -270,11 +270,16 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
           <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
             <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
             Last updated:{" "}
-            {new Date(projectData.last_updated).toLocaleDateString(undefined, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
+            {projectData.last_updated
+              ? new Date(projectData.last_updated).toLocaleDateString(
+                  undefined,
+                  {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  }
+                )
+              : "Not available"}
           </div>
           <div className="flex gap-2">
             <Button

@@ -33,12 +33,14 @@ Folderly Guia is an innovative web application designed to help urban planners, 
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/folderly-guia.git
    cd folderly-guia
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    # or
@@ -46,11 +48,13 @@ Folderly Guia is an innovative web application designed to help urban planners, 
    ```
 
 3. Create a `.env.local` file in the root directory with your Google Maps API key:
+
    ```
    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_api_key_here
    ```
 
 4. Start the development server:
+
    ```bash
    npm run dev
    # or
