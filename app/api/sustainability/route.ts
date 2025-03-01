@@ -1,5 +1,3 @@
-// app/api/air-quality/route.ts
-
 import { NextResponse } from 'next/server';
 import { handleAirQualityPost } from '@/lib/air-quality';
 import { handleSolarGet } from '@/lib/solar';
@@ -7,6 +5,8 @@ import { handleGBIFGet } from '@/lib/gbif';
 import { handleSoilData } from '@/lib/soil-data';
 import { getLocationImages } from '@/lib/location-images';
 import { sustainabilitySchema } from '@/lib/schemas/sustainability-schema';
+import { handleNearbyPlaceCounts } from '@/lib/nearby-places';
+import { handleWeatherStatistics } from '@/lib/weather-statistics';
 import OpenAI from "openai";
 import { ProjectData } from '@/types/project';
 
@@ -34,22 +34,26 @@ export async function POST(request: Request) {
     const country = body.location.country || "Unknown Country";
     const radius = body.radius || 1000; // Default to 1000 meters if not provided
 
-    // Execute all API calls concurrently
+    // Execute all API calls concurrently.
+    // Note: Soil data expects radius in kilometers.
     const [
       airQualityData,
       solarData,
       biodiversityData,
       locationImages,
       soilData,
+      nearbyPlacesData,
+      weatherData,
     ] = await Promise.all([
       handleAirQualityPost(latitude, longitude),
       handleSolarGet(latitude, longitude),
       handleGBIFGet(latitude, longitude),
       getLocationImages(latitude, longitude),
-      handleSoilData(latitude, longitude, radius),
+      handleSoilData(latitude, longitude, radius / 1000),       // Convert radius from meters to km.
+      handleNearbyPlaceCounts(latitude, longitude, radius),       // Nearby places expects meters.
+      handleWeatherStatistics(latitude, longitude),              // Weather data.
     ]);
 
-    console.log('locationImages', locationImages);
 
     // Aggregate the results into a single JSON response.
     const aggregatedData = {
@@ -57,14 +61,18 @@ export async function POST(request: Request) {
       solar: solarData,
       biodiversity: biodiversityData,
       soil: soilData,
+      nearbyPlaces: nearbyPlacesData,
+      weather: weatherData,
     };
 
-    // Create context for OpenAI
+    console.log(aggregatedData);
+
+    // Create context for OpenAI.
     const locationContext = `${city}, ${country}`;
     const apiContext = `aggregatedData ${JSON.stringify(aggregatedData, null, 2)}`;
     console.log(apiContext);
 
-    // Generate project data using OpenAI
+    // Generate project data using OpenAI.
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
@@ -97,10 +105,10 @@ export async function POST(request: Request) {
       frequency_penalty: 0,
       presence_penalty: 0
     });
-    // Parse the OpenAI response
+    // Parse the OpenAI response.
     const projectData = JSON.parse(response.choices[0].message.content || '{}') as ProjectData;
 
-    // Update with actual location data and images
+    // Update with actual location data and images.
     const updatedProjectData = {
       ...projectData,
       location: {
