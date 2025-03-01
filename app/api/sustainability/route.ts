@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { handleAirQualityPost } from '@/lib/air-quality';
 import { handleSolarGet } from '@/lib/solar';
 import { handleGBIFGet } from '@/lib/gbif';
+import { handleSoilData } from '@/lib/soil-data';
 import { getLocationImages } from '@/lib/location-images';
 import { sustainabilitySchema } from '@/lib/schemas/sustainability-schema';
 import OpenAI from "openai";
@@ -34,11 +35,18 @@ export async function POST(request: Request) {
     const radius = body.radius || 1000; // Default to 1000 meters if not provided
 
     // Execute all API calls concurrently
-    const [airQualityData, solarData, biodiversityData, locationImages] = await Promise.all([
+    const [
+      airQualityData,
+      solarData,
+      biodiversityData,
+      locationImages,
+      soilData,
+    ] = await Promise.all([
       handleAirQualityPost(latitude, longitude),
       handleSolarGet(latitude, longitude),
       handleGBIFGet(latitude, longitude),
-      getLocationImages(latitude, longitude)
+      getLocationImages(latitude, longitude),
+      handleSoilData(latitude, longitude, radius),
     ]);
 
     console.log('locationImages', locationImages);
@@ -48,11 +56,13 @@ export async function POST(request: Request) {
       airQuality: airQualityData,
       solar: solarData,
       biodiversity: biodiversityData,
+      soil: soilData,
     };
 
     // Create context for OpenAI
     const locationContext = `${city}, ${country}`;
     const apiContext = `aggregatedData ${JSON.stringify(aggregatedData, null, 2)}`;
+    console.log(apiContext);
 
     // Generate project data using OpenAI
     const response = await openai.chat.completions.create({

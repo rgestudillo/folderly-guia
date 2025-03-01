@@ -18,9 +18,7 @@ export default function SustainabilityPage() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
-  const [aggregatedData, setAggregatedData] = useState<ProjectData | null>(
-    null
-  );
+  const [aggregatedData, setAggregatedData] = useState<ProjectData | null>(null);
   const [isLoadingResults, setIsLoadingResults] = useState(false);
   const router = useRouter();
 
@@ -54,6 +52,7 @@ export default function SustainabilityPage() {
               projectData.location.split(",").slice(-1)[0]?.trim() ||
               "Unknown Country",
           },
+          radius: projectData.radius,
           project_name: projectData.idea,
           radius: projectData.radius,
         }),
