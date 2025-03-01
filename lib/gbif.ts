@@ -1,6 +1,6 @@
 const GBIF_API_BASE_URL = 'https://api.gbif.org/v1';
 
-export async function handleGBIFGet(latitude: number, longitude: number, radius: number = 1000) {
+export async function handleGBIFGet(latitude: number, longitude: number, radius: number = 500) {
     try {
         // Convert radius from meters to degrees (approximate)
         const degreeRadius = radius / 111320; // 1 degree ≈ 111.32 km at the equator

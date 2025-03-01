@@ -14,19 +14,20 @@ export default function SustainabilityPage() {
     idea: "",
     location: "",
     coordinates: { lat: 0, lng: 0 },
-    radius: 1000, // in meters
+    radius: 500, // in meters
   });
   const [isLoading, setIsLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [aggregatedData, setAggregatedData] = useState<ProjectData | null>(null);
   const [isLoadingResults, setIsLoadingResults] = useState(false);
+  const [rainEnabled, setRainEnabled] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const savedProjectData = sessionStorage.getItem("projectData");
     if (savedProjectData) {
       const parsedData = JSON.parse(savedProjectData);
-      setProjectData((prev) => ({ ...prev, ...parsedData, radius: 1000 }));
+      setProjectData((prev) => ({ ...prev, ...parsedData, radius: 500 }));
       setIsLoading(false);
     } else {
       router.push("/");
@@ -73,19 +74,28 @@ export default function SustainabilityPage() {
         {!isLoading && (
           <MapboxMap
             center={projectData.coordinates}
-            zoom={14}
+            zoom={16}
             radius={projectData.radius}
+            rainEnabled={rainEnabled}
             onRadiusChange={(newRadius) =>
               setProjectData((prev) => ({ ...prev, radius: newRadius }))
             }
           />
         )}
 
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg z-10 w-96 border border-gray-100 dark:border-gray-700">
+        <div className="absolute bottom-8 left-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg z-10 w-96 border border-gray-100 dark:border-gray-700">
           <h2 className="text-xl font-bold mb-4 text-green-800 dark:text-green-400">
             Adjust Project Area
           </h2>
           <div className="space-y-4">
+            {/* Toggle rain effect button */}
+            <Button
+              onClick={() => setRainEnabled((prev) => !prev)}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              {rainEnabled ? "Disable Rain" : "Enable Rain"}
+            </Button>
+
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-green-700 dark:text-green-400">
                 Radius
