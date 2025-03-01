@@ -8,24 +8,24 @@ interface RisksTabProps {
 }
 
 export function RisksTab({ projectData }: RisksTabProps) {
-  const getRiskColor = (description: string) => {
-    const level = description.toLowerCase();
+  const getRiskColor = (value: string) => {
+    const level = value.toLowerCase();
     if (level.includes("high"))
       return "bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800";
-    if (level.includes("medium"))
+    if (level.includes("medium") || level.includes("moderate"))
       return "bg-yellow-100 text-yellow-800 border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800";
     if (level.includes("low"))
       return "bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800";
     return "bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800";
   };
 
-  const getRiskIcon = (description: string) => {
-    const level = description.toLowerCase();
+  const getRiskIcon = (value: string) => {
+    const level = value.toLowerCase();
     if (level.includes("high"))
       return (
         <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
       );
-    if (level.includes("medium"))
+    if (level.includes("medium") || level.includes("moderate"))
       return (
         <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
       );
@@ -50,7 +50,7 @@ export function RisksTab({ projectData }: RisksTabProps) {
 
       <div className="grid md:grid-cols-2 gap-4">
         {Object.entries(projectData.risk_analysis).map(
-          ([risk, description], index) => (
+          ([risk, riskData], index) => (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -61,30 +61,38 @@ export function RisksTab({ projectData }: RisksTabProps) {
               <div className="flex justify-between items-center mb-3">
                 <h4 className="font-medium flex items-center gap-2 dark:text-gray-200">
                   <div className="p-1 rounded-full bg-white dark:bg-gray-800">
-                    {getRiskIcon(description)}
+                    {getRiskIcon(riskData.value)}
                   </div>
                   {risk
                     .split("_")
                     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                     .join(" ")}
                 </h4>
-                <Badge variant="outline" className={getRiskColor(description)}>
-                  {description}
+                <Badge
+                  variant="outline"
+                  className={getRiskColor(riskData.value)}
+                >
+                  {riskData.value}
                 </Badge>
               </div>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 mb-3">
+                {riskData.explanation}
+              </p>
               <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1.5 mt-2">
                 <div
                   className={`h-1.5 rounded-full ${
-                    description.toLowerCase().includes("high")
+                    riskData.value.toLowerCase().includes("high")
                       ? "bg-red-500"
-                      : description.toLowerCase().includes("medium")
+                      : riskData.value.toLowerCase().includes("medium") ||
+                        riskData.value.toLowerCase().includes("moderate")
                       ? "bg-yellow-500"
                       : "bg-green-500"
                   }`}
                   style={{
-                    width: description.toLowerCase().includes("high")
+                    width: riskData.value.toLowerCase().includes("high")
                       ? "90%"
-                      : description.toLowerCase().includes("medium")
+                      : riskData.value.toLowerCase().includes("medium") ||
+                        riskData.value.toLowerCase().includes("moderate")
                       ? "50%"
                       : "20%",
                   }}
