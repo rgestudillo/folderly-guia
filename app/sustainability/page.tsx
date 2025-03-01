@@ -18,9 +18,7 @@ export default function SustainabilityPage() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
-  const [aggregatedData, setAggregatedData] = useState<ProjectData | null>(
-    null
-  );
+  const [aggregatedData, setAggregatedData] = useState<ProjectData | null>(null);
   const [isLoadingResults, setIsLoadingResults] = useState(false);
   const router = useRouter();
 
@@ -50,6 +48,7 @@ export default function SustainabilityPage() {
             latitude: projectData.coordinates.lat,
             longitude: projectData.coordinates.lng,
           },
+          radius: projectData.radius,
           project_name: projectData.idea,
         }),
       });
