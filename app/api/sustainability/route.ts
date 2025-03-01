@@ -1,11 +1,10 @@
-// app/api/air-quality/route.ts
-
 import { NextResponse } from 'next/server';
 import { handleAirQualityPost } from '@/lib/air-quality';
 import { handleSolarGet } from '@/lib/solar';
 import { handleGBIFGet } from '@/lib/gbif';
 import { getLocationImages } from '@/lib/location-images';
 import { handleSoilData } from '@/lib/soil-data';
+import { handleNearbyPlaceCounts } from '@/lib/nearby-places';
 import { dummyData } from './dummydata';
 
 export async function POST(request: Request) {
@@ -29,8 +28,8 @@ export async function POST(request: Request) {
     }
 
     const { latitude, longitude } = body.location;
-    // Expect a radius (in kilometers) for the soil summary; default to 1 km if not provided.
-    const radius: number = body.radius || 1;
+    // Expect a radius in kilometers; default to 1 km if not provided.
+    const radiusKm: number = body.radius || 1;
 
     // Execute all API calls concurrently
     const [
@@ -39,16 +38,19 @@ export async function POST(request: Request) {
       biodiversityData,
       locationImages,
       soilData,
+      nearbyPlacesData,
     ] = await Promise.all([
       handleAirQualityPost(latitude, longitude),
       handleSolarGet(latitude, longitude),
       handleGBIFGet(latitude, longitude),
       getLocationImages(latitude, longitude),
-      handleSoilData(latitude, longitude, radius),
+      handleSoilData(latitude, longitude, radiusKm),       // Soil data expects km.
+      handleNearbyPlaceCounts(latitude, longitude, radiusKm), // Nearby places expects meters.
     ]);
 
-    console.log('locationImages:', locationImages);
-    console.log(JSON.stringify(soilData, null, 3));
+    // console.log('locationImages:', locationImages);
+    // console.log('soilData:', JSON.stringify(soilData, null, 3));
+    console.log('nearbyPlacesData:', JSON.stringify(nearbyPlacesData, null, 3));
 
     // Aggregate the results into a single JSON response.
     const aggregatedData = {
@@ -56,6 +58,7 @@ export async function POST(request: Request) {
       solar: solarData,
       biodiversity: biodiversityData,
       soil: soilData,
+      nearbyPlaces: nearbyPlacesData,
     };
 
     // For now, return dummy data updated with the actual coordinates and location images.
@@ -69,11 +72,9 @@ export async function POST(request: Request) {
       },
     };
 
-    // Print the aggregated data for debugging purposes.
-    console.log('aggregatedData:', aggregatedData);
+    // console.log('aggregatedData:', aggregatedData);
 
-    // Let's return the dummy data for now while we are refining the backend.
-    // To return the full aggregated data, simply use: return NextResponse.json(aggregatedData);
+    // Return dummy data for now; to return full aggregated data, use aggregatedData instead.
     return NextResponse.json(updatedDummyData);
   } catch (error: any) {
     return NextResponse.json(
