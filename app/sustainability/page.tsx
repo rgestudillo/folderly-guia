@@ -4,23 +4,21 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import GoogleMapComponent from "@/components/google-map";
 import { ResultsModal } from "@/components/results-modal";
 import { LoadingAnimation } from "@/components/loading-animation";
 import { ProjectData } from "@/types/project";
+import MapboxMap from "@/components/MapboxMap";
 
 export default function SustainabilityPage() {
   const [projectData, setProjectData] = useState({
     idea: "",
     location: "",
     coordinates: { lat: 0, lng: 0 },
-    radius: 1000,
+    radius: 1000, // in meters
   });
   const [isLoading, setIsLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
-  const [aggregatedData, setAggregatedData] = useState<ProjectData | null>(
-    null
-  );
+  const [aggregatedData, setAggregatedData] = useState<ProjectData | null>(null);
   const [isLoadingResults, setIsLoadingResults] = useState(false);
   const router = useRouter();
 
@@ -36,6 +34,7 @@ export default function SustainabilityPage() {
   }, [router]);
 
   const handleRadiusChange = (value: number[]) => {
+    // Update projectData with the slider value (in meters)
     setProjectData((prev) => ({ ...prev, radius: value[0] }));
   };
 
@@ -72,11 +71,13 @@ export default function SustainabilityPage() {
     <div className="flex flex-col h-[calc(100vh-4rem)] bg-gradient-to-b from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       <div className="flex-1 relative p-4">
         {!isLoading && (
-          <GoogleMapComponent
+          <MapboxMap
             center={projectData.coordinates}
             zoom={14}
-            mapId={process.env.NEXT_PUBLIC_GOOGLE_MAP_ID || ""}
             radius={projectData.radius}
+            onRadiusChange={(newRadius) =>
+              setProjectData((prev) => ({ ...prev, radius: newRadius }))
+            }
           />
         )}
 
