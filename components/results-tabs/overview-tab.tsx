@@ -36,10 +36,11 @@ export function OverviewTab({ projectData }: OverviewTabProps) {
 
   // Count risks by severity
   const riskCounts = Object.values(projectData.risk_analysis).reduce(
-    (counts, level) => {
-      const levelLower = level.toLowerCase();
+    (counts, riskData) => {
+      const levelLower = riskData.value.toLowerCase();
       if (levelLower.includes("high")) counts.high++;
-      else if (levelLower.includes("medium")) counts.medium++;
+      else if (levelLower.includes("medium") || levelLower.includes("moderate"))
+        counts.medium++;
       else if (levelLower.includes("low")) counts.low++;
       return counts;
     },
@@ -220,26 +221,34 @@ export function OverviewTab({ projectData }: OverviewTabProps) {
           </div>
           <div className="space-y-3">
             {Object.entries(projectData.sustainability_score.factors).map(
-              ([key, value], index) => (
+              ([key, factor], index) => (
                 <motion.div
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.2, delay: 0.1 * index }}
                   key={key}
-                  className="flex justify-between items-center p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors"
+                  className="flex flex-col p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors"
                 >
-                  <span className="flex items-center gap-2 dark:text-gray-200">
-                    <Star className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
-                    {key
-                      .split("_")
-                      .map(
-                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
-                      )
-                      .join(" ")}
-                  </span>
-                  <Badge variant="outline" className={getScoreColor(value)}>
-                    {value}
-                  </Badge>
+                  <div className="flex justify-between items-center">
+                    <span className="flex items-center gap-2 dark:text-gray-200">
+                      <Star className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
+                      {key
+                        .split("_")
+                        .map(
+                          (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                        )
+                        .join(" ")}
+                    </span>
+                    <Badge
+                      variant="outline"
+                      className={getScoreColor(factor.value)}
+                    >
+                      {factor.value}/10
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 ml-6">
+                    {factor.explanation}
+                  </p>
                 </motion.div>
               )
             )}

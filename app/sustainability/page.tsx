@@ -49,8 +49,13 @@ export default function SustainabilityPage() {
           location: {
             latitude: projectData.coordinates.lat,
             longitude: projectData.coordinates.lng,
+            city: projectData.location.split(",")[0]?.trim() || "Unknown City",
+            country:
+              projectData.location.split(",").slice(-1)[0]?.trim() ||
+              "Unknown Country",
           },
           project_name: projectData.idea,
+          radius: projectData.radius,
         }),
       });
       if (!response.ok) {
