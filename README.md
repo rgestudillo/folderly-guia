@@ -9,7 +9,11 @@ Folderly Guia is an innovative web application designed to help urban planners, 
 - **Location-Based Project Analysis**: Input your project idea and location to receive tailored sustainability insights
 - **Interactive Map Visualization**: Explore potential project areas with customizable radius settings
 - **Comprehensive Sustainability Scoring**: Get detailed metrics on environmental impact, feasibility, and risks
+- **Environmental Data Integration**: Access real-time air quality, solar potential, biodiversity, and soil data
+- **Climate Risk Assessment**: Evaluate flood, earthquake, and pollution risks for your project area
+- **Policy Compliance Checker**: Review alignment with local regulations and international guidelines
 - **Funding Opportunity Recommendations**: Discover relevant grants and financial incentives for sustainable projects
+- **PDF Report Generation**: Download comprehensive project reports for sharing and documentation
 - **User-Friendly Interface**: Intuitive design with smooth animations and responsive layout
 
 ## 🛠️ Tech Stack
@@ -20,60 +24,36 @@ Folderly Guia is an innovative web application designed to help urban planners, 
 - **Animation**: Framer Motion
 - **State Management**: React Hooks (useState, useEffect)
 - **Routing**: Next.js App Router
+- **API Integration**: OpenAI GPT-4o for sustainability analysis
+- **PDF Generation**: @react-pdf/renderer
+- **External APIs**: Weather, Air Quality, Solar, Biodiversity (GBIF), Soil Data
 - **Development**: ESLint, TypeScript
-
-## 🏃‍♂️ Getting Started
-
-### Prerequisites
-
-- Node.js 18.x or higher
-- npm or yarn
-- Google Maps API key
-
-### Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/yourusername/folderly-guia.git
-   cd folderly-guia
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. Create a `.env.local` file in the root directory with your Google Maps API key:
-
-   ```
-   NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_api_key_here
-   ```
-
-4. Start the development server:
-
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
 ## 🌍 How It Works
 
-1. **Input Project Details**: Enter your project idea and select a location
-2. **Analyze Area**: Adjust the radius to define the project's scope
-3. **Review Results**: Get comprehensive sustainability analysis including:
-   - Overall sustainability score
-   - Land use compatibility assessment
-   - Renewable energy potential
-   - Biodiversity impact analysis
-   - Risk factor evaluation
-   - Available funding opportunities
+1. **Input Project Details**: Enter your project idea and select a location using the Google Places Autocomplete
+2. **Analyze Area**: Adjust the radius to define the project's scope on the interactive map
+3. **Generate Analysis**: Our system collects data from multiple environmental and geographical APIs
+4. **AI Processing**: GPT-4o analyzes the collected data to generate comprehensive sustainability insights
+5. **Review Results**: Get detailed analysis across multiple categories:
+   - Overall sustainability score with detailed breakdown
+   - Feasibility report with key findings and recommendations
+   - Risk analysis for climate, environmental, and geological factors
+   - Policy compliance with local and international regulations
+   - Available funding opportunities tailored to your project
+   - GIS data visualization and location images
+
+## 📊 Data Sources
+
+Folderly Guia integrates data from multiple sources to provide comprehensive sustainability analysis:
+
+- **Air Quality Data**: Real-time air pollution metrics
+- **Solar Potential**: Solar radiation and energy generation potential
+- **Biodiversity Information**: Species occurrence data from GBIF
+- **Soil Composition**: Detailed soil type and quality analysis
+- **Weather Statistics**: Climate patterns and weather risks
+- **Nearby Places**: Infrastructure and amenities in the project area
+- **Location Imagery**: Visual context of the project location
 
 ## 💡 Why Folderly Guia?
 
@@ -83,19 +63,15 @@ In an era of climate change and environmental challenges, sustainable developmen
 
 Our talented team of developers brought diverse skills and perspectives to create Folderly Guia:
 
-- **Refino Kashi Kyle G. Estudillo** - Full Stack Developer
-- **John Elias Mojado** - UI/UX Designer & Frontend Developer
-- **Chris Loui Canete** - Backend Developer & Data Integration
+- **Refino Kashi Kyle G. Estudillo** - Lead Developer and AI Specialist
+- **John Elias Mojado** - Backend Developer & API Specialist
+- **Chris Loui Canete** - Backend Developer & API Specialist
 - **Lizter Angelo Abrau** - GIS Specialist & Map Integration
 - **Wince dela Fuente** - Project Manager & Sustainability Expert
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## 🏆 Hackathon Submission
 
-This project was developed for the Sustainability Innovation Hackathon with the goal of addressing sustainable urban development challenges through innovative technology solutions.
+This project was developed for UPCSG Sustainability Innovation Hackathon.
 
 ---
 
