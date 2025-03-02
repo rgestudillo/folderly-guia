@@ -14,20 +14,19 @@ export default function SustainabilityPage() {
     idea: "",
     location: "",
     coordinates: { lat: 0, lng: 0 },
-    radius: 500, // in meters
+    radius: 200, // in meters
   });
   const [isLoading, setIsLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [aggregatedData, setAggregatedData] = useState<ProjectData | null>(null);
   const [isLoadingResults, setIsLoadingResults] = useState(false);
-  const [rainEnabled, setRainEnabled] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const savedProjectData = sessionStorage.getItem("projectData");
     if (savedProjectData) {
       const parsedData = JSON.parse(savedProjectData);
-      setProjectData((prev) => ({ ...prev, ...parsedData, radius: 500 }));
+      setProjectData((prev) => ({ ...prev, ...parsedData, radius: 200 }));
       setIsLoading(false);
     } else {
       router.push("/");
@@ -35,7 +34,6 @@ export default function SustainabilityPage() {
   }, [router]);
 
   const handleRadiusChange = (value: number[]) => {
-    // Update projectData with the slider value (in meters)
     setProjectData((prev) => ({ ...prev, radius: value[0] }));
   };
 
@@ -62,7 +60,6 @@ export default function SustainabilityPage() {
       setShowResults(true);
     } catch (error) {
       console.error(error);
-      // Handle error appropriately (e.g., show a notification)
     } finally {
       setIsLoadingResults(false);
     }
@@ -76,50 +73,45 @@ export default function SustainabilityPage() {
             center={projectData.coordinates}
             zoom={16}
             radius={projectData.radius}
-            rainEnabled={rainEnabled}
             onRadiusChange={(newRadius) =>
               setProjectData((prev) => ({ ...prev, radius: newRadius }))
             }
+            rotateMap={isLoadingResults}
           />
         )}
 
-        <div className="absolute bottom-8 left-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg z-10 w-96 border border-gray-100 dark:border-gray-700">
-          <h2 className="text-xl font-bold mb-4 text-green-800 dark:text-green-400">
-            Adjust Project Area
-          </h2>
-          <div className="space-y-4">
-            {/* Toggle rain effect button */}
-            <Button
-              onClick={() => setRainEnabled((prev) => !prev)}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              {rainEnabled ? "Disable Rain" : "Enable Rain"}
-            </Button>
-
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-green-700 dark:text-green-400">
-                Radius
-              </span>
-              <span className="text-sm text-green-600 dark:text-green-400">
-                {(projectData.radius / 1000).toFixed(1)} km
-              </span>
+        {/* Render the Adjust Project Area section only when not loading */}
+        {!isLoadingResults && (
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white/70 dark:bg-gray-800/70 p-6 rounded-lg shadow-lg z-10 w-96 border border-gray-100 dark:border-gray-700">
+            <h2 className="text-xl font-bold mb-4 text-green-800 dark:text-green-400 text-center">
+              Adjust Project Area
+            </h2>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-green-700 dark:text-green-400">
+                  Radius
+                </span>
+                <span className="text-sm text-green-600 dark:text-green-400">
+                  {(projectData.radius / 1000).toFixed(1)} km
+                </span>
+              </div>
+              <Slider
+                value={[projectData.radius]}
+                max={2000}
+                min={100}
+                step={100}
+                onValueChange={handleRadiusChange}
+                className="w-full"
+              />
+              <Button
+                onClick={handleConfirm}
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+              >
+                Confirm and View Results
+              </Button>
             </div>
-            <Slider
-              value={[projectData.radius]}
-              max={5000}
-              min={100}
-              step={100}
-              onValueChange={handleRadiusChange}
-              className="w-full"
-            />
-            <Button
-              onClick={handleConfirm}
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
-            >
-              Confirm and View Results
-            </Button>
           </div>
-        </div>
+        )}
       </div>
 
       {isLoadingResults && <LoadingAnimation />}

@@ -5,6 +5,7 @@ import mapboxgl from "mapbox-gl";
 import {
   circle as turfCircle,
   distance as turfDistance,
+  bbox as turfBbox,
 } from "@turf/turf";
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
@@ -13,32 +14,27 @@ interface MapboxMapProps {
   center: { lat: number; lng: number };
   zoom: number;
   radius: number; // in meters
-  rainEnabled?: boolean;
   onRadiusChange?: (newRadius: number) => void;
   onCenterChange?: (newCenter: { lat: number; lng: number }) => void;
+  rotateMap?: boolean;
 }
 
 const MapboxMap: React.FC<MapboxMapProps> = ({
   center,
   zoom,
   radius,
-  rainEnabled = false,
   onRadiusChange,
   onCenterChange,
+  rotateMap = false,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const centerMarkerRef = useRef<mapboxgl.Marker | null>(null);
-  // Flag for arc drag
   const isDraggingArcRef = useRef(false);
-  // Refs for rain effect
-  const rainCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const rainAnimationRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    // Define an initial zoom level that shows a very zoomed-out view.
     const initialZoom = 0.5;
     const finalZoom = zoom;
 
@@ -46,14 +42,14 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
       center: [center.lng, center.lat],
-      zoom: initialZoom, // Start zoomed out.
+      zoom: initialZoom,
     });
     mapRef.current = map;
 
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
     map.on("load", () => {
-      // ---- Enable 3D Terrain and 3D Buildings ----
+      // Add DEM source for 3D terrain
       map.addSource("mapbox-dem", {
         type: "raster-dem",
         url: "mapbox://mapbox.mapbox-terrain-dem-v1",
@@ -63,7 +59,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       map.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
       map.setPitch(45);
 
-      // Determine the label layer id to insert the 3D buildings layer beneath.
       let labelLayerId: string | undefined;
       const layers = map.getStyle().layers;
       if (layers) {
@@ -107,17 +102,16 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         },
         labelLayerId
       );
-      // -------------------------------------------
 
-      // Animate from the zoomed-out view to your desired center and zoom.
+      // Fly from initial view to target center and zoom.
       map.flyTo({
         center: [center.lng, center.lat],
         zoom: finalZoom,
-        duration: 4000, // duration in ms; adjust as needed.
+        duration: 4000,
         easing: (t) => t,
       });
 
-      // Create the circle source using Turf.js
+      // Create and add circle source and layers.
       const circleFeature = turfCircle([center.lng, center.lat], radius, {
         steps: 64,
         units: "meters",
@@ -127,7 +121,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         data: circleFeature,
       });
 
-      // Add a fill layer for the circle.
       map.addLayer({
         id: "circle-fill",
         type: "fill",
@@ -138,7 +131,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         },
       });
 
-      // Add a thin visible outline layer for the circle.
       map.addLayer({
         id: "circle-outline",
         type: "line",
@@ -149,7 +141,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         },
       });
 
-      // Add an invisible hit layer with a wider line width for easier dragging.
       map.addLayer({
         id: "circle-outline-hit",
         type: "line",
@@ -183,7 +174,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         }
       });
 
-      // --- Draggable Arc Setup ---
       map.on("mousedown", "circle-outline-hit", (e) => {
         e.preventDefault();
         isDraggingArcRef.current = true;
@@ -242,7 +232,8 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     };
   }, []); // Run once on mount
 
-  // External updates for center and radius.
+  // When center or radius change, update the circle and smoothly transition the zoom
+  // so that the circle (fitting the given radius) is in view.
   useEffect(() => {
     if (mapRef.current && centerMarkerRef.current) {
       centerMarkerRef.current.setLngLat([center.lng, center.lat]);
@@ -251,89 +242,70 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         units: "meters",
       });
       (mapRef.current.getSource("circle") as mapboxgl.GeoJSONSource).setData(updatedCircle);
+
+      // Compute the bounding box for the circle.
+      const bounds = turfBbox(updatedCircle);
+      // Get the camera options required to fit the bounds (this returns {center, zoom, pitch, bearing}).
+      const cameraOptions = mapRef.current.cameraForBounds(bounds, { padding: 20 });
+      if (cameraOptions) {
+        // Smoothly transition the zoom (and center) so that the entire circle fits the view.
+        mapRef.current.easeTo({
+          center: [center.lng, center.lat],
+          zoom: cameraOptions.zoom,
+          duration: 2000,
+        });
+      }
     }
   }, [center, radius]);
 
-  // Rain effect: add or remove canvas overlay based on rainEnabled prop.
+  // Rotate the map if rotateMap is true.
+  // Instead of snapping the center instantly, we interpolate the center toward the pinned marker.
   useEffect(() => {
-    if (!mapContainerRef.current) return;
-
-    if (rainEnabled) {
-      // Create canvas overlay.
-      const canvas = document.createElement("canvas");
-      canvas.style.position = "absolute";
-      canvas.style.top = "0";
-      canvas.style.left = "0";
-      canvas.style.width = "100%";
-      canvas.style.height = "100%";
-      canvas.style.pointerEvents = "none";
-      mapContainerRef.current.appendChild(canvas);
-      rainCanvasRef.current = canvas;
-
-      // Set canvas dimensions to match the container.
-      const rect = mapContainerRef.current.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-
-      // Create raindrops array.
-      const drops: {
-        x: number;
-        y: number;
-        length: number;
-        speed: number;
-      }[] = [];
-      const numDrops = 150;
-      for (let i = 0; i < numDrops; i++) {
-        drops.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          length: 10 + Math.random() * 10,
-          speed: 2 + Math.random() * 2,
+    if (!mapRef.current) return;
+    let animationFrameId: number;
+    let currentBearing = mapRef.current.getBearing();
+  
+    const smoothFactor = 0.05; // Adjust recentering speed (0 = no recentering, 1 = instant).
+    const smoothFactorZoom = 0.05; // Adjust zoom interpolation speed.
+  
+    const rotate = () => {
+      currentBearing = (currentBearing + 0.7) % 360; // Adjust rotation speed as desired.
+  
+      if (centerMarkerRef.current && mapRef.current) {
+        const markerPos = centerMarkerRef.current.getLngLat();
+        const currentCenter = mapRef.current.getCenter();
+        const newCenter = {
+          lng: currentCenter.lng + (markerPos.lng - currentCenter.lng) * smoothFactor,
+          lat: currentCenter.lat + (markerPos.lat - currentCenter.lat) * smoothFactor,
+        };
+  
+        // Compute the desired zoom level by creating a new circle with the updated center and provided radius.
+        const newCircle = turfCircle([newCenter.lng, newCenter.lat], radius, {
+          steps: 64,
+          units: "meters",
         });
-      }
-
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      const animate = () => {
-        if (!ctx || !canvas) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = "rgba(174,194,224,0.5)";
-        ctx.lineWidth = 1;
-        ctx.lineCap = "round";
-        for (const drop of drops) {
-          ctx.beginPath();
-          ctx.moveTo(drop.x, drop.y);
-          ctx.lineTo(drop.x, drop.y + drop.length);
-          ctx.stroke();
-          drop.y += drop.speed;
-          if (drop.y > canvas.height) {
-            drop.y = -drop.length;
-            drop.x = Math.random() * canvas.width;
-          }
+        const bounds = turfBbox(newCircle);
+        const cameraOptions = mapRef.current.cameraForBounds(bounds, { padding: 20 });
+        if (cameraOptions) {
+          const currentZoom = mapRef.current.getZoom();
+          const desiredZoom = cameraOptions.zoom;
+          const newZoom = currentZoom + (desiredZoom - currentZoom) * smoothFactorZoom;
+          mapRef.current.setZoom(newZoom);
         }
-        rainAnimationRef.current = requestAnimationFrame(animate);
-      };
-
-      animate();
-    } else {
-      // If rain is disabled, remove the canvas and cancel animation.
-      if (rainCanvasRef.current) {
-        cancelAnimationFrame(rainAnimationRef.current!);
-        rainCanvasRef.current.remove();
-        rainCanvasRef.current = null;
+  
+        mapRef.current.setCenter(newCenter);
       }
-    }
-
-    // Cleanup on unmount or when rainEnabled changes.
-    return () => {
-      if (rainCanvasRef.current) {
-        cancelAnimationFrame(rainAnimationRef.current!);
-        rainCanvasRef.current.remove();
-        rainCanvasRef.current = null;
-      }
+      mapRef.current?.setBearing(currentBearing);
+      animationFrameId = requestAnimationFrame(rotate);
     };
-  }, [rainEnabled]);
+  
+    if (rotateMap) {
+      animationFrameId = requestAnimationFrame(rotate);
+    }
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [rotateMap, radius]);
 
   return <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />;
 };
