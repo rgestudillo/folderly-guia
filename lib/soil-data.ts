@@ -72,6 +72,7 @@ export async function handleSoilData(latitude: number, longitude: number, radius
 
     // Aggregate the simplified responses.
     const aggregatedSoilData = {
+      source: "OpenEPI",
       soilType: simplifiedSoilType,
       soilProperty: simplifiedSoilProperty,
       soilSummary: simplifiedSoilSummary,

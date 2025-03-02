@@ -30,6 +30,7 @@ export async function handleWeatherStatistics(lat: number, lon: number, units: s
   
       // Simplify the response: extract only the key details.
       const parsedData = {
+        source: "OpenWeatherMap",
         lat: data.lat,
         lon: data.lon,
         date: data.date,

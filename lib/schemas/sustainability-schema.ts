@@ -3,85 +3,259 @@ export const sustainabilitySchema = {
   "strict": true,
   "schema": {
     "type": "object",
+    "required": [
+      "project_name",
+      "sustainability_score",
+      "feasibility_report",
+      "risk_analysis",
+      "policy_compliance",
+      "funding_opportunities",
+      "api_context_data"
+    ],
     "properties": {
       "project_name": {
         "type": "string"
       },
-      "location": {
+      "risk_analysis": {
         "type": "object",
+        "required": [
+          "flood_risk",
+          "earthquake_risk",
+          "pollution_level",
+          "biodiversity_threats",
+          "climate_risk",
+          "infrastructure_risk"
+        ],
         "properties": {
-          "latitude": {
-            "type": "number"
+          "flood_risk": {
+            "type": "object",
+            "required": [
+              "value",
+              "explanation"
+            ],
+            "properties": {
+              "value": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "type": "string"
+              },
+              "explanation": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
           },
-          "longitude": {
-            "type": "number"
+          "climate_risk": {
+            "type": "object",
+            "required": [
+              "value",
+              "explanation"
+            ],
+            "properties": {
+              "value": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "type": "string"
+              },
+              "explanation": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
           },
-          "city": {
-            "type": "string"
+          "earthquake_risk": {
+            "type": "object",
+            "required": [
+              "value",
+              "explanation"
+            ],
+            "properties": {
+              "value": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "type": "string"
+              },
+              "explanation": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
           },
-          "country": {
-            "type": "string"
+          "pollution_level": {
+            "type": "object",
+            "required": [
+              "value",
+              "explanation"
+            ],
+            "properties": {
+              "value": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "type": "string"
+              },
+              "explanation": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
           },
-          "images": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "infrastructure_risk": {
+            "type": "object",
+            "required": [
+              "value",
+              "explanation"
+            ],
+            "properties": {
+              "value": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "type": "string"
+              },
+              "explanation": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "biodiversity_threats": {
+            "type": "object",
+            "required": [
+              "value",
+              "explanation"
+            ],
+            "properties": {
+              "value": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "type": "string"
+              },
+              "explanation": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
           }
         },
-        "required": [
-          "latitude",
-          "longitude",
-          "city",
-          "country",
-          "images"
-        ],
         "additionalProperties": false
       },
-      "sustainability_score": {
+      "api_context_data": {
         "type": "object",
+        "description": "Container for API context data summary.",
         "properties": {
-          "score": {
-            "type": "number"
-          },
-          "rating": {
-            "type": "string"
-          },
-          "explanation": {
-            "type": "string"
-          },
-          "factors": {
-            "type": "object",
-            "properties": {},
-            "required": [],
-            "additionalProperties": {
+          "api": {
+            "type": "array",
+            "description": "Array of API context entries, each with a name, summary, and source.",
+            "items": {
               "type": "object",
               "properties": {
-                "value": {
-                  "type": "number"
+                "name": {
+                  "type": "string",
+                  "description": "The name of the API context entry."
                 },
-                "explanation": {
-                  "type": "string"
+                "summary": {
+                  "type": "string",
+                  "description": "A brief summary of the API context data."
+                },
+                "source": {
+                  "type": "string",
+                  "description": "The source of the API context data."
                 }
               },
               "required": [
-                "value",
-                "explanation"
+                "name",
+                "summary",
+                "source"
               ],
               "additionalProperties": false
             }
           }
         },
         "required": [
-          "score",
-          "rating",
-          "explanation",
-          "factors"
+          "api"
         ],
+        "additionalProperties": false
+      },
+      "policy_compliance": {
+        "type": "object",
+        "required": [
+          "local_regulations",
+          "international_guidelines"
+        ],
+        "properties": {
+          "local_regulations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "law_name",
+                "compliance_status",
+                "notes"
+              ],
+              "properties": {
+                "notes": {
+                  "type": "string"
+                },
+                "law_name": {
+                  "type": "string"
+                },
+                "compliance_status": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "international_guidelines": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "treaty",
+                "alignment",
+                "notes"
+              ],
+              "properties": {
+                "notes": {
+                  "type": "string"
+                },
+                "treaty": {
+                  "type": "string"
+                },
+                "alignment": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
         "additionalProperties": false
       },
       "feasibility_report": {
         "type": "object",
+        "required": [
+          "status",
+          "key_findings",
+          "recommendations"
+        ],
         "properties": {
           "status": {
             "type": "string"
@@ -99,95 +273,65 @@ export const sustainabilitySchema = {
             }
           }
         },
-        "required": [
-          "status",
-          "key_findings",
-          "recommendations"
-        ],
         "additionalProperties": false
       },
-      "risk_analysis": {
+      "sustainability_score": {
         "type": "object",
-        "properties": {},
-        "required": [],
-        "additionalProperties": {
-          "type": "object",
-          "properties": {
-            "value": {
-              "type": "string"
-            },
-            "explanation": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "value",
-            "explanation"
-          ],
-          "additionalProperties": false
-        }
-      },
-      "policy_compliance": {
-        "type": "object",
+        "required": [
+          "score",
+          "rating",
+          "explanation",
+          "factors"
+        ],
         "properties": {
-          "local_regulations": {
-            "type": "array",
-            "items": {
+          "score": {
+            "type": "number"
+          },
+          "rating": {
+            "type": "string"
+          },
+          "factors": {
+            "type": "object",
+            "required": [],
+            "properties": {},
+            "additionalProperties": {
               "type": "object",
+              "required": [
+                "value",
+                "explanation"
+              ],
               "properties": {
-                "law_name": {
-                  "type": "string"
+                "value": {
+                  "type": "number"
                 },
-                "compliance_status": {
-                  "type": "string"
-                },
-                "notes": {
+                "explanation": {
                   "type": "string"
                 }
               },
-              "required": [
-                "law_name",
-                "compliance_status",
-                "notes"
-              ],
               "additionalProperties": false
             }
           },
-          "international_guidelines": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "treaty": {
-                  "type": "string"
-                },
-                "alignment": {
-                  "type": "string"
-                },
-                "notes": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "treaty",
-                "alignment",
-                "notes"
-              ],
-              "additionalProperties": false
-            }
+          "explanation": {
+            "type": "string"
           }
         },
-        "required": [
-          "local_regulations",
-          "international_guidelines"
-        ],
         "additionalProperties": false
       },
       "funding_opportunities": {
         "type": "array",
         "items": {
           "type": "object",
+          "required": [
+            "name",
+            "amount",
+            "eligibility",
+            "application_deadline",
+            "link"
+          ],
           "properties": {
+            "link": {
+              "type": "string"
+            },
             "name": {
               "type": "string"
             },
@@ -199,64 +343,12 @@ export const sustainabilitySchema = {
             },
             "application_deadline": {
               "type": "string"
-            },
-            "link": {
-              "type": "string"
             }
           },
-          "required": [
-            "name",
-            "amount",
-            "eligibility",
-            "application_deadline",
-            "link"
-          ],
           "additionalProperties": false
         }
-      },
-      "gis_visualization": {
-        "type": "object",
-        "properties": {
-          "layers": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                },
-                "source": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "name",
-                "description",
-                "source"
-              ],
-              "additionalProperties": false
-            }
-          }
-        },
-        "required": [
-          "layers"
-        ],
-        "additionalProperties": false
       }
     },
-    "required": [
-      "project_name",
-      "location",
-      "sustainability_score",
-      "feasibility_report",
-      "risk_analysis",
-      "policy_compliance",
-      "funding_opportunities",
-      "gis_visualization"
-    ],
     "additionalProperties": false
   }
-}; 
+}
