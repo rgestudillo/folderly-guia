@@ -84,10 +84,10 @@ export interface ProjectData {
     application_deadline: string;
     link: string;
   }>;
-  gis_visualization: {
-    layers: Array<{
+  api_context_data: {
+    api: Array<{
       name: string;
-      description: string;
+      summary: string;
       source: string;
     }>;
   };

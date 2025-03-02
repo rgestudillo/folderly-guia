@@ -34,6 +34,7 @@ export async function handleSolarGet(latitude: number, longitude: number) {
     // postal code, administrative area, region code, solar potential, imagery quality,
     // and imagery processed date.
     const parsedData = {
+      source: "Google Solar API",
       solarPotential: data.solarPotential ? {
         maxArrayPanelsCount: data.solarPotential.maxArrayPanelsCount,
         maxArrayAreaMeters2: data.solarPotential.maxArrayAreaMeters2,

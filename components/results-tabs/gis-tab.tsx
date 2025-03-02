@@ -39,7 +39,7 @@ export function GISTab({ projectData }: GISTabProps) {
         </h3>
 
         <div className="grid md:grid-cols-2 gap-4">
-          {projectData.gis_visualization.layers.map((layer, index) => (
+          {projectData.api_context_data.api.map((layer, index) => (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -56,7 +56,7 @@ export function GISTab({ projectData }: GISTabProps) {
                     {layer.name}
                   </h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    {layer.description}
+                    {layer.summary}
                   </p>
                   <div className="flex items-center">
                     <span className="text-xs bg-white dark:bg-gray-800 px-2 py-1 rounded-full border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400">

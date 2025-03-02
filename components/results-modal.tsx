@@ -144,14 +144,6 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
               </div>
               {projectData.project_name}
             </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </Button>
           </DialogHeader>
         </div>
 
@@ -200,7 +192,7 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
               </TabsTrigger>
             </TabsList>
 
-            <div className="h-[500px] overflow-y-auto pr-2">
+            <div className="pr-2">
               <AnimatePresence mode="wait">
                 {mounted && (
                   <motion.div
@@ -286,7 +278,7 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
               variant="outline"
               onClick={handleDownloadPDF}
               disabled={isGeneratingPDF}
-              className="flex items-center gap-2 hover:bg-green-50"
+              className="flex items-center gap-2 hover:bg-green-50 dark:hover:bg-green-900/30 dark:border-green-700 dark:text-green-300"
             >
               {isGeneratingPDF ? (
                 <>
