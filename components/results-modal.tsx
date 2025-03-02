@@ -135,8 +135,8 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
 
   return (
     <Dialog open={true} onOpenChange={() => onClose()}>
-      <DialogContent className="max-w-5xl bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-0 overflow-hidden border-green-200 dark:border-green-900 flex flex-col max-h-[90vh]">
-        <div className="sticky top-0 z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-green-100 dark:border-green-900 p-6">
+      <DialogContent className="max-w-5xl bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-0 overflow-hidden border-green-200 dark:border-green-900 flex flex-col h-[85vh]">
+        <div className="sticky top-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-green-100 dark:border-green-900 p-6">
           <DialogHeader className="flex flex-row items-center justify-between">
             <DialogTitle className="text-3xl font-bold text-green-800 dark:text-green-400 flex items-center gap-3">
               <div className="bg-green-100 dark:bg-green-900 p-2 rounded-full">
@@ -147,52 +147,54 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
           </DialogHeader>
         </div>
 
-        <div className="p-6 overflow-y-auto flex-1">
+        <div className="flex flex-col flex-1 overflow-hidden">
           <Tabs
             defaultValue="overview"
             onValueChange={setCurrentTab}
-            className="space-y-6"
+            className="flex flex-col h-full"
           >
-            <TabsList className="grid w-full grid-cols-6 gap-2 p-1 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl sticky top-0 z-10">
-              <TabsTrigger
-                value="overview"
-                className="data-[state=active]:bg-green-100 dark:data-[state=active]:bg-green-900/50 data-[state=active]:text-green-800 dark:data-[state=active]:text-green-300"
-              >
-                Overview
-              </TabsTrigger>
-              <TabsTrigger
-                value="feasibility"
-                className="data-[state=active]:bg-blue-100 dark:data-[state=active]:bg-blue-900/50 data-[state=active]:text-blue-800 dark:data-[state=active]:text-blue-300"
-              >
-                Feasibility
-              </TabsTrigger>
-              <TabsTrigger
-                value="risks"
-                className="data-[state=active]:bg-amber-100 dark:data-[state=active]:bg-amber-900/50 data-[state=active]:text-amber-800 dark:data-[state=active]:text-amber-300"
-              >
-                Risks
-              </TabsTrigger>
-              <TabsTrigger
-                value="policy"
-                className="data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900/50 data-[state=active]:text-purple-800 dark:data-[state=active]:text-purple-300"
-              >
-                Policy
-              </TabsTrigger>
-              <TabsTrigger
-                value="funding"
-                className="data-[state=active]:bg-emerald-100 dark:data-[state=active]:bg-emerald-900/50 data-[state=active]:text-emerald-800 dark:data-[state=active]:text-emerald-300"
-              >
-                Funding
-              </TabsTrigger>
-              <TabsTrigger
-                value="gis"
-                className="data-[state=active]:bg-indigo-100 dark:data-[state=active]:bg-indigo-900/50 data-[state=active]:text-indigo-800 dark:data-[state=active]:text-indigo-300"
-              >
-                GIS Data
-              </TabsTrigger>
-            </TabsList>
+            <div className="px-6 pt-4 sticky top-0 z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm">
+              <TabsList className="grid w-full grid-cols-6 gap-2 p-1 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl">
+                <TabsTrigger
+                  value="overview"
+                  className="data-[state=active]:bg-green-100 dark:data-[state=active]:bg-green-900/50 data-[state=active]:text-green-800 dark:data-[state=active]:text-green-300"
+                >
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger
+                  value="feasibility"
+                  className="data-[state=active]:bg-blue-100 dark:data-[state=active]:bg-blue-900/50 data-[state=active]:text-blue-800 dark:data-[state=active]:text-blue-300"
+                >
+                  Feasibility
+                </TabsTrigger>
+                <TabsTrigger
+                  value="risks"
+                  className="data-[state=active]:bg-amber-100 dark:data-[state=active]:bg-amber-900/50 data-[state=active]:text-amber-800 dark:data-[state=active]:text-amber-300"
+                >
+                  Risks
+                </TabsTrigger>
+                <TabsTrigger
+                  value="policy"
+                  className="data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900/50 data-[state=active]:text-purple-800 dark:data-[state=active]:text-purple-300"
+                >
+                  Policy
+                </TabsTrigger>
+                <TabsTrigger
+                  value="funding"
+                  className="data-[state=active]:bg-emerald-100 dark:data-[state=active]:bg-emerald-900/50 data-[state=active]:text-emerald-800 dark:data-[state=active]:text-emerald-300"
+                >
+                  Funding
+                </TabsTrigger>
+                <TabsTrigger
+                  value="gis"
+                  className="data-[state=active]:bg-indigo-100 dark:data-[state=active]:bg-indigo-900/50 data-[state=active]:text-indigo-800 dark:data-[state=active]:text-indigo-300"
+                >
+                  GIS Data
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-            <div className="pr-2">
+            <div className="flex-1 overflow-y-auto px-6 pb-4">
               <AnimatePresence mode="wait">
                 {mounted && (
                   <motion.div
@@ -201,6 +203,7 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.2 }}
+                    className="py-4"
                   >
                     <TabsContent
                       value="overview"
@@ -258,7 +261,7 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
           </Tabs>
         </div>
 
-        <div className="sticky bottom-0 z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-t border-green-100 dark:border-green-900 p-6 flex justify-between items-center">
+        <div className="sticky bottom-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-t border-green-100 dark:border-green-900 p-6 flex justify-between items-center">
           <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
             <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
             Last updated:{" "}
