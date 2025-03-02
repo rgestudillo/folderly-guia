@@ -97,7 +97,7 @@ export async function POST(request: Request) {
         "type": "json_schema",
         "json_schema": sustainabilitySchema
       },
-      temperature: 1,
+      temperature: 0,
       max_tokens: 2048,
       top_p: 1,
       frequency_penalty: 0,
