@@ -7,6 +7,8 @@ import { getLocationImages } from '@/lib/location-images';
 import { sustainabilitySchema } from '@/lib/openai/sustainability-schema';
 import { handleNearbyPlaceCounts } from '@/lib/nearby-places';
 import { handleWeatherStatistics } from '@/lib/api/1_climate_weather_data/weather-statistics';
+import { handleNASAPowerDailyGet } from '@/lib/api/1_climate_weather_data/nasa-power-daily';
+import { handleOverpassGet } from '@/lib/api/5_renewable_infrastructure_data/overpass';
 import OpenAI from "openai";
 import { ProjectData } from '@/types/project';
 import { sustainabilitySystemPrompt } from '@/lib/openai/sustainability-prompt';
@@ -20,10 +22,8 @@ const openai = new OpenAI({
 
 export async function POST(request: Request) {
   try {
-    // Parse the JSON body from the incoming request.
     const body = await request.json();
 
-    // Validate that the required location fields are provided.
     if (!body.location || body.location.latitude === undefined || body.location.longitude === undefined) {
       return NextResponse.json(
         { error: 'Request body must include a "location" object with "latitude" and "longitude" properties.' },
@@ -44,7 +44,6 @@ export async function POST(request: Request) {
     console.log("radius is: " + radius);
 
     // Execute all API calls concurrently.
-    // Note: Soil data expects radius in kilometers.
     const [
       airQualityData,
       solarData,
@@ -54,6 +53,7 @@ export async function POST(request: Request) {
       nearbyPlacesData,
       weatherData,
       dailyClimateData,
+      overpassData,
       disasterData,
       pollenData
     ] = await Promise.all([
@@ -65,6 +65,7 @@ export async function POST(request: Request) {
       handleNearbyPlaceCounts(latitude, longitude, radius),
       handleWeatherStatistics(latitude, longitude),
       handleNASAPowerDailyGet(latitude, longitude),
+      handleOverpassGet(latitude, longitude, radius)
       handleDisasterGet(latitude, longitude),
       handlePollenGet(latitude, longitude, 1)
     ]);
@@ -78,6 +79,7 @@ export async function POST(request: Request) {
       nearbyPlaces: nearbyPlacesData,
       weather: weatherData,
       climateData: dailyClimateData,
+      infrastructure: overpassData.summary,
       disasters: disasterData,
       pollen: pollenData 
     };
@@ -128,7 +130,6 @@ export async function POST(request: Request) {
     // Parse the OpenAI response.
     const projectData = JSON.parse(response.choices[0].message.content || '{}') as ProjectData;
 
-    // Update with actual location data and images.
     const updatedProjectData = {
       ...projectData,
       project_name: projectName,
