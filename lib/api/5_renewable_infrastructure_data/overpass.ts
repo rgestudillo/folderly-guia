@@ -183,7 +183,7 @@ export async function handleOverpassGet(
         return { category, error: `Error fetching data: ${response.status}` };
       }
       const data = await response.json();
-    //   console.log(`Successfully fetched data for category: ${category}`);
+      //   console.log(`Successfully fetched data for category: ${category}`);
       return { category, data };
     });
 
@@ -255,11 +255,7 @@ export async function handleOverpassGet(
     // Return the plain JSON object including both the raw results and the summarized output.
     return {
       source: "OpenStreetMap Overpass API",
-      latitude,
-      longitude,
-      radius,
-      results, // full raw results
-      summary: summarizedResults, // summarized info per category
+      summary: summarizedResults,
     };
   } catch (error: any) {
     console.error("Server error:", error.message);

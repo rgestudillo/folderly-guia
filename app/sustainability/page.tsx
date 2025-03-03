@@ -63,6 +63,7 @@ export default function SustainabilityPage() {
 
       const rawData = await rawDataResponse.json();
       setRawData(rawData);
+      console.log("RAW DATA: ", rawData);
 
       // Then, use the raw data for sustainability analysis
       const sustainabilityResponse = await fetch("/api/sustainability", {
