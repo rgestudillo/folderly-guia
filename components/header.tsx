@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Leaf, Github, Star } from "lucide-react";
+import { Leaf, Github, Star, BookOpen } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
@@ -20,6 +20,16 @@ export function Header() {
           </Link>
 
           <div className="flex items-center gap-4">
+            <Link
+              href="/documentation"
+              className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/40 rounded-full py-2 px-4 transition-all duration-300 text-green-800 dark:text-green-400 border border-green-200 dark:border-green-800"
+            >
+              <BookOpen className="h-4 w-4" />
+              <span className="font-medium text-xs hidden sm:inline">
+                Documentation
+              </span>
+            </Link>
+
             <ThemeToggle />
 
             <Link
