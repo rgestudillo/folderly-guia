@@ -8,31 +8,56 @@ export interface ProjectData {
     images: string[];
   };
   sustainability_score: {
-    score: number;
-    rating: string;
-    explanation: string;
-    factors: {
-      environmental_impact: {
-        value: number;
-        explanation: string;
+    weights: {
+      "Climate & Weather Data": {
+        weight: number;
+        justification: string;
       };
-      climate_risk: {
-        value: number;
-        explanation: string;
+      "Air Quality & Pollution": {
+        weight: number;
+        justification: string;
       };
-      policy_compliance: {
-        value: number;
-        explanation: string;
+      "Disaster Risk & Hazard Data": {
+        weight: number;
+        justification: string;
       };
-      biodiversity_benefit: {
-        value: number;
-        explanation: string;
+      "Biodiversity & Ecosystem Health": {
+        weight: number;
+        justification: string;
       };
-      [key: string]: {
-        value: number;
-        explanation: string;
+      "Renewable Energy & Infrastructure Feasibility": {
+        weight: number;
+        justification: string;
       };
     };
+    scores: {
+      "Climate & Weather Data": {
+        raw_score: number;
+        weighted_score: number;
+        metrics?: Record<string, number>;
+      };
+      "Air Quality & Pollution": {
+        raw_score: number;
+        weighted_score: number;
+        metrics?: Record<string, number>;
+      };
+      "Disaster Risk & Hazard Data": {
+        raw_score: number;
+        weighted_score: number;
+        metrics?: Record<string, number>;
+      };
+      "Biodiversity & Ecosystem Health": {
+        raw_score: number;
+        weighted_score: number;
+        metrics?: Record<string, number>;
+      };
+      "Renewable Energy & Infrastructure Feasibility": {
+        raw_score: number;
+        weighted_score: number;
+        metrics?: Record<string, number>;
+      };
+    };
+    overall_score: number;
   };
   feasibility_report: {
     status: string;

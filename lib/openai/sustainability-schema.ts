@@ -1,6 +1,5 @@
 export const sustainabilitySchema = {
   "name": "project_data",
-  "strict": true,
   "schema": {
     "type": "object",
     "required": [
@@ -158,39 +157,39 @@ export const sustainabilitySchema = {
       },
       "api_context_data": {
         "type": "object",
-        "description": "Container for API context data summary.",
+        "required": [
+          "api"
+        ],
         "properties": {
           "api": {
             "type": "array",
-            "description": "Array of API context entries, each with a name, summary, and source.",
             "items": {
               "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string",
-                  "description": "The name of the API context entry."
-                },
-                "summary": {
-                  "type": "string",
-                  "description": "A brief summary of the API context data."
-                },
-                "source": {
-                  "type": "string",
-                  "description": "The source of the API context data."
-                }
-              },
               "required": [
                 "name",
                 "summary",
                 "source"
               ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the API context entry."
+                },
+                "source": {
+                  "type": "string",
+                  "description": "The source of the API context data."
+                },
+                "summary": {
+                  "type": "string",
+                  "description": "A brief summary of the API context data."
+                }
+              },
               "additionalProperties": false
-            }
+            },
+            "description": "Array of API context entries, each with a name, summary, and source."
           }
         },
-        "required": [
-          "api"
-        ],
+        "description": "Container for API context data summary.",
         "additionalProperties": false
       },
       "policy_compliance": {
@@ -278,41 +277,237 @@ export const sustainabilitySchema = {
       "sustainability_score": {
         "type": "object",
         "required": [
-          "score",
-          "rating",
-          "explanation",
-          "factors"
+          "weights",
+          "scores",
+          "overall_score"
         ],
         "properties": {
-          "score": {
-            "type": "number"
-          },
-          "rating": {
-            "type": "string"
-          },
-          "factors": {
+          "scores": {
             "type": "object",
-            "required": [],
-            "properties": {},
-            "additionalProperties": {
-              "type": "object",
-              "required": [
-                "value",
-                "explanation"
-              ],
-              "properties": {
-                "value": {
-                  "type": "number"
+            "required": [
+              "Climate & Weather Data",
+              "Air Quality & Pollution",
+              "Disaster Risk & Hazard Data",
+              "Biodiversity & Ecosystem Health",
+              "Renewable Energy & Infrastructure Feasibility"
+            ],
+            "properties": {
+              "Climate & Weather Data": {
+                "type": "object",
+                "required": [
+                  "raw_score",
+                  "weighted_score"
+                ],
+                "properties": {
+                  "metrics": {
+                    "type": "object",
+                    "description": "Detailed breakdown of key metrics and their contributions.",
+                    "additionalProperties": {
+                      "type": "number"
+                    }
+                  },
+                  "raw_score": {
+                    "type": "number"
+                  },
+                  "weighted_score": {
+                    "type": "number"
+                  }
                 },
-                "explanation": {
-                  "type": "string"
-                }
+                "additionalProperties": false
               },
-              "additionalProperties": false
-            }
+              "Air Quality & Pollution": {
+                "type": "object",
+                "required": [
+                  "raw_score",
+                  "weighted_score"
+                ],
+                "properties": {
+                  "metrics": {
+                    "type": "object",
+                    "description": "Detailed breakdown of key metrics and their contributions.",
+                    "additionalProperties": {
+                      "type": "number"
+                    }
+                  },
+                  "raw_score": {
+                    "type": "number"
+                  },
+                  "weighted_score": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "Disaster Risk & Hazard Data": {
+                "type": "object",
+                "required": [
+                  "raw_score",
+                  "weighted_score"
+                ],
+                "properties": {
+                  "metrics": {
+                    "type": "object",
+                    "description": "Detailed breakdown of key metrics and their contributions.",
+                    "additionalProperties": {
+                      "type": "number"
+                    }
+                  },
+                  "raw_score": {
+                    "type": "number"
+                  },
+                  "weighted_score": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "Biodiversity & Ecosystem Health": {
+                "type": "object",
+                "required": [
+                  "raw_score",
+                  "weighted_score"
+                ],
+                "properties": {
+                  "metrics": {
+                    "type": "object",
+                    "description": "Detailed breakdown of key metrics and their contributions.",
+                    "additionalProperties": {
+                      "type": "number"
+                    }
+                  },
+                  "raw_score": {
+                    "type": "number"
+                  },
+                  "weighted_score": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "Renewable Energy & Infrastructure Feasibility": {
+                "type": "object",
+                "required": [
+                  "raw_score",
+                  "weighted_score"
+                ],
+                "properties": {
+                  "metrics": {
+                    "type": "object",
+                    "description": "Detailed breakdown of key metrics and their contributions.",
+                    "additionalProperties": {
+                      "type": "number"
+                    }
+                  },
+                  "raw_score": {
+                    "type": "number"
+                  },
+                  "weighted_score": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "description": "Raw and weighted scores for each sustainability aspect with detailed metrics breakdown.",
+            "additionalProperties": false
           },
-          "explanation": {
-            "type": "string"
+          "weights": {
+            "type": "object",
+            "required": [
+              "Climate & Weather Data",
+              "Air Quality & Pollution",
+              "Disaster Risk & Hazard Data",
+              "Biodiversity & Ecosystem Health",
+              "Renewable Energy & Infrastructure Feasibility"
+            ],
+            "properties": {
+              "Climate & Weather Data": {
+                "type": "object",
+                "required": [
+                  "weight",
+                  "justification"
+                ],
+                "properties": {
+                  "weight": {
+                    "type": "number"
+                  },
+                  "justification": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "Air Quality & Pollution": {
+                "type": "object",
+                "required": [
+                  "weight",
+                  "justification"
+                ],
+                "properties": {
+                  "weight": {
+                    "type": "number"
+                  },
+                  "justification": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "Disaster Risk & Hazard Data": {
+                "type": "object",
+                "required": [
+                  "weight",
+                  "justification"
+                ],
+                "properties": {
+                  "weight": {
+                    "type": "number"
+                  },
+                  "justification": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "Biodiversity & Ecosystem Health": {
+                "type": "object",
+                "required": [
+                  "weight",
+                  "justification"
+                ],
+                "properties": {
+                  "weight": {
+                    "type": "number"
+                  },
+                  "justification": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "Renewable Energy & Infrastructure Feasibility": {
+                "type": "object",
+                "required": [
+                  "weight",
+                  "justification"
+                ],
+                "properties": {
+                  "weight": {
+                    "type": "number"
+                  },
+                  "justification": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "description": "Normalized weights for each sustainability aspect with justifications.",
+            "additionalProperties": false
+          },
+          "overall_score": {
+            "type": "number",
+            "description": "The overall sustainability score, calculated as the sum of all weighted contributions."
           }
         },
         "additionalProperties": false
