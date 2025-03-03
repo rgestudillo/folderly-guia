@@ -2,116 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Leaf, ArrowRight, Cloud, Sun, Wind, Droplets, Thermometer } from "lucide-react";
+import { Search, Leaf, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { loadGoogleMapsApi } from "@/utils/loadGoogleMapsApi";
 import { motion } from "framer-motion";
-
-const ApiSection = () => {
-  const apis = [
-    {
-      name: "NASA POWER Daily API",
-      description: "Solar radiation and meteorological data",
-      icon: Sun,
-      color: "from-orange-500 to-amber-500",
-      status: "Connected",
-      data: "Solar Radiation: 5.2 kWh/m²",
-    },
-    {
-      name: "Google Solar API",
-      description: "Solar potential and rooftop analysis",
-      icon: Sun,
-      color: "from-yellow-500 to-orange-500",
-      status: "Connected",
-      data: "Rooftop Area: 120m²",
-    },
-    {
-      name: "OpenWeatherMap",
-      description: "Weather and climate data",
-      icon: Cloud,
-      color: "from-blue-500 to-cyan-500",
-      status: "Connected",
-      data: "Temperature: 28°C",
-    },
-    {
-      name: "GBIF",
-      description: "Biodiversity and species data",
-      icon: Leaf,
-      color: "from-green-500 to-emerald-500",
-      status: "Connected",
-      data: "Species Count: 156",
-    },
-    {
-      name: "OpenEPI Soil API",
-      description: "Soil composition and quality",
-      icon: Droplets,
-      color: "from-brown-500 to-amber-500",
-      status: "Connected",
-      data: "Soil pH: 6.8",
-    },
-    {
-      name: "Google Air Quality API",
-      description: "Air quality and pollution data",
-      icon: Thermometer,
-      color: "from-purple-500 to-pink-500",
-      status: "Connected",
-      data: "AQI: 45",
-    },
-  ];
-
-  return (
-    <div className="w-full py-16 bg-white dark:bg-gray-900">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            Environmental Data Integration
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Leveraging multiple data sources to provide comprehensive environmental analysis
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {apis.map((api, index) => (
-            <motion.div
-              key={api.name}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <div className={`bg-gradient-to-r ${api.color} p-3 rounded-lg`}>
-                    <api.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {api.name}
-                    </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {api.description}
-                    </p>
-                  </div>
-                </div>
-                <span className="px-2 py-1 text-xs font-medium text-green-700 bg-green-100 dark:bg-green-900/30 dark:text-green-300 rounded-full">
-                  {api.status}
-                </span>
-              </div>
-              <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {api.data}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export default function Home() {
   const [projectData, setProjectData] = useState({
@@ -123,6 +20,7 @@ export default function Home() {
   const router = useRouter();
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const MAX_IDEA_LENGTH = 500;
 
   useEffect(() => {
     loadGoogleMapsApi().then(() => initAutocomplete());
@@ -133,9 +31,7 @@ export default function Home() {
 
     autocompleteRef.current = new window.google.maps.places.Autocomplete(
       inputRef.current,
-      {
-        types: ["geocode", "establishment"], // Search for addresses and places
-      }
+      { types: ["geocode"] }
     );
     autocompleteRef.current.addListener("place_changed", handlePlaceSelect);
   };
@@ -251,27 +147,40 @@ export default function Home() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label
-                    htmlFor="project-idea"
-                    className="text-md font-medium text-gray-700 dark:text-gray-200"
-                  >
-                    What&apos;s your project idea?
-                  </Label>
+                  <div className="flex justify-between items-center">
+                    <Label
+                      htmlFor="project-idea"
+                      className="text-md font-medium text-gray-700 dark:text-gray-200"
+                    >
+                      What&apos;s your project idea?
+                    </Label>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      {projectData.idea.length}/{MAX_IDEA_LENGTH} characters
+                    </span>
+                  </div>
                   <div className="relative">
-                    <Leaf className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600 dark:text-green-400" />
-                    <Input
+                    <div className="absolute left-3 top-3 text-green-600 dark:text-green-400">
+                      <Leaf className="h-5 w-5" />
+                    </div>
+                    <Textarea
                       id="project-idea"
-                      placeholder="e.g., Community Garden, Solar Farm"
+                      placeholder="Describe your project in detail. What are your goals? What resources will you need? Who will benefit from this project?"
                       value={projectData.idea}
-                      onChange={(e) =>
-                        setProjectData((prev) => ({
-                          ...prev,
-                          idea: e.target.value,
-                        }))
-                      }
-                      className="pl-10 py-6 border-gray-200 dark:border-gray-700 focus:border-green-500 focus:ring-green-500 rounded-xl dark:bg-gray-700 dark:text-white"
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        const value = e.target.value;
+                        if (value.length <= MAX_IDEA_LENGTH) {
+                          setProjectData((prev) => ({
+                            ...prev,
+                            idea: value,
+                          }));
+                        }
+                      }}
+                      className="pl-10 pt-2 min-h-[150px] border-gray-200 dark:border-gray-700 focus:border-green-500 focus:ring-green-500 rounded-xl dark:bg-gray-700 dark:text-white resize-none"
                     />
                   </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
+                    Be as detailed as possible to get the most accurate sustainability assessment.
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -302,7 +211,7 @@ export default function Home() {
                 <Button
                   type="submit"
                   className="w-full bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-700 hover:to-emerald-600 text-white font-bold py-6 rounded-xl transition duration-300 ease-in-out transform hover:scale-[1.02] flex items-center justify-center gap-2"
-                  disabled={isLoading}
+                  disabled={isLoading || !projectData.idea.trim() || !projectData.location.trim()}
                 >
                   {isLoading ? "Analyzing..." : "Analyze Sustainability"}
                   {!isLoading && <ArrowRight className="h-5 w-5" />}
@@ -316,9 +225,6 @@ export default function Home() {
         <div className="absolute top-20 left-10 w-32 h-32 bg-green-300 dark:bg-green-700 rounded-full filter blur-3xl opacity-20 z-0"></div>
         <div className="absolute bottom-20 right-10 w-40 h-40 bg-blue-300 dark:bg-blue-700 rounded-full filter blur-3xl opacity-20 z-0"></div>
       </div>
-
-      {/* Add the new API section */}
-      <ApiSection />
     </>
   );
 }
