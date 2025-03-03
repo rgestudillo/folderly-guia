@@ -18,7 +18,9 @@ export default function SustainabilityPage() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
-  const [aggregatedData, setAggregatedData] = useState<ProjectData | null>(null);
+  const [aggregatedData, setAggregatedData] = useState<ProjectData | null>(
+    null
+  );
   const [isLoadingResults, setIsLoadingResults] = useState(false);
   const router = useRouter();
 
@@ -94,14 +96,14 @@ export default function SustainabilityPage() {
                   Radius
                 </span>
                 <span className="text-sm text-green-600 dark:text-green-400">
-                  {(projectData.radius / 1000).toFixed(1)} km
+                  {projectData.radius} meters
                 </span>
               </div>
               <Slider
                 value={[projectData.radius]}
-                max={2000}
-                min={100}
-                step={100}
+                max={300}
+                min={0}
+                step={25}
                 onValueChange={handleRadiusChange}
                 className="w-full"
               />

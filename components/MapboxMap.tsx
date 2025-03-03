@@ -60,10 +60,15 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       map.setPitch(45);
 
       let labelLayerId: string | undefined;
-      const layers = map.getStyle().layers;
-      if (layers) {
+      const style = map.getStyle();
+      const layers = style?.layers || [];
+      if (layers.length > 0) {
         for (const layer of layers) {
-          if (layer.type === "symbol" && layer.layout && (layer.layout as any)["text-field"]) {
+          if (
+            layer.type === "symbol" &&
+            layer.layout &&
+            (layer.layout as any)["text-field"]
+          ) {
             labelLayerId = layer.id;
             break;
           }
@@ -163,11 +168,17 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
 
       centerMarker.on("dragend", () => {
         const newCenter = centerMarker.getLngLat();
-        const updatedCircle = turfCircle([newCenter.lng, newCenter.lat], radius, {
-          steps: 64,
-          units: "meters",
-        });
-        (map.getSource("circle") as mapboxgl.GeoJSONSource).setData(updatedCircle);
+        const updatedCircle = turfCircle(
+          [newCenter.lng, newCenter.lat],
+          radius,
+          {
+            steps: 64,
+            units: "meters",
+          }
+        );
+        (map.getSource("circle") as mapboxgl.GeoJSONSource).setData(
+          updatedCircle
+        );
 
         if (onCenterChange) {
           onCenterChange({ lat: newCenter.lat, lng: newCenter.lng });
@@ -184,8 +195,12 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       });
     });
 
-    const onArcDrag = (e: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
-      if (!isDraggingArcRef.current || !mapRef.current || !centerMarkerRef.current)
+    const onArcDrag = (e: mapboxgl.MapMouseEvent) => {
+      if (
+        !isDraggingArcRef.current ||
+        !mapRef.current ||
+        !centerMarkerRef.current
+      )
         return;
       const map = mapRef.current;
       const centerCoords = centerMarkerRef.current.getLngLat();
@@ -197,6 +212,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
             type: "Point",
             coordinates: [centerCoords.lng, centerCoords.lat],
           },
+          properties: {},
         },
         {
           type: "Feature",
@@ -204,6 +220,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
             type: "Point",
             coordinates: [pointerLngLat.lng, pointerLngLat.lat],
           },
+          properties: {},
         },
         { units: "meters" }
       );
@@ -213,7 +230,9 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         newRadius,
         { steps: 64, units: "meters" }
       );
-      (map.getSource("circle") as mapboxgl.GeoJSONSource).setData(updatedCircle);
+      (map.getSource("circle") as mapboxgl.GeoJSONSource).setData(
+        updatedCircle
+      );
 
       if (onRadiusChange) {
         onRadiusChange(newRadius);
@@ -241,12 +260,24 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         steps: 64,
         units: "meters",
       });
-      (mapRef.current.getSource("circle") as mapboxgl.GeoJSONSource).setData(updatedCircle);
+      (mapRef.current.getSource("circle") as mapboxgl.GeoJSONSource).setData(
+        updatedCircle
+      );
 
       // Compute the bounding box for the circle.
       const bounds = turfBbox(updatedCircle);
       // Get the camera options required to fit the bounds (this returns {center, zoom, pitch, bearing}).
-      const cameraOptions = mapRef.current.cameraForBounds(bounds, { padding: 20 });
+      const cameraOptions = mapRef.current.cameraForBounds(
+        [
+          bounds[0],
+          bounds[1],
+          bounds[2],
+          bounds[3],
+        ] as mapboxgl.LngLatBoundsLike,
+        {
+          padding: 20,
+        }
+      );
       if (cameraOptions) {
         // Smoothly transition the zoom (and center) so that the entire circle fits the view.
         mapRef.current.easeTo({
@@ -264,41 +295,56 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     if (!mapRef.current) return;
     let animationFrameId: number;
     let currentBearing = mapRef.current.getBearing();
-  
+
     const smoothFactor = 0.05; // Adjust recentering speed (0 = no recentering, 1 = instant).
     const smoothFactorZoom = 0.05; // Adjust zoom interpolation speed.
-  
+
     const rotate = () => {
       currentBearing = (currentBearing + 0.7) % 360; // Adjust rotation speed as desired.
-  
+
       if (centerMarkerRef.current && mapRef.current) {
         const markerPos = centerMarkerRef.current.getLngLat();
         const currentCenter = mapRef.current.getCenter();
         const newCenter = {
-          lng: currentCenter.lng + (markerPos.lng - currentCenter.lng) * smoothFactor,
-          lat: currentCenter.lat + (markerPos.lat - currentCenter.lat) * smoothFactor,
+          lng:
+            currentCenter.lng +
+            (markerPos.lng - currentCenter.lng) * smoothFactor,
+          lat:
+            currentCenter.lat +
+            (markerPos.lat - currentCenter.lat) * smoothFactor,
         };
-  
+
         // Compute the desired zoom level by creating a new circle with the updated center and provided radius.
         const newCircle = turfCircle([newCenter.lng, newCenter.lat], radius, {
           steps: 64,
           units: "meters",
         });
         const bounds = turfBbox(newCircle);
-        const cameraOptions = mapRef.current.cameraForBounds(bounds, { padding: 20 });
+        const cameraOptions = mapRef.current.cameraForBounds(
+          [
+            bounds[0],
+            bounds[1],
+            bounds[2],
+            bounds[3],
+          ] as mapboxgl.LngLatBoundsLike,
+          {
+            padding: 20,
+          }
+        );
         if (cameraOptions) {
           const currentZoom = mapRef.current.getZoom();
-          const desiredZoom = cameraOptions.zoom;
-          const newZoom = currentZoom + (desiredZoom - currentZoom) * smoothFactorZoom;
+          const desiredZoom = cameraOptions.zoom || currentZoom;
+          const newZoom =
+            currentZoom + (desiredZoom - currentZoom) * smoothFactorZoom;
           mapRef.current.setZoom(newZoom);
         }
-  
+
         mapRef.current.setCenter(newCenter);
       }
       mapRef.current?.setBearing(currentBearing);
       animationFrameId = requestAnimationFrame(rotate);
     };
-  
+
     if (rotateMap) {
       animationFrameId = requestAnimationFrame(rotate);
     }
@@ -307,7 +353,9 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     };
   }, [rotateMap, radius]);
 
-  return <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />;
+  return (
+    <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
+  );
 };
 
 export default MapboxMap;
