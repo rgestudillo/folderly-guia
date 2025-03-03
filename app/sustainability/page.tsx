@@ -47,8 +47,10 @@ export default function SustainabilityPage() {
           location: {
             latitude: projectData.coordinates.lat,
             longitude: projectData.coordinates.lng,
+            location_name: projectData.location,
           },
-          project_name: projectData.idea,
+          project_idea: projectData.idea,
+          radius: projectData.radius,
         }),
       });
       if (!response.ok) {

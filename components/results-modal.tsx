@@ -135,72 +135,111 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
 
   return (
     <Dialog open={true} onOpenChange={() => onClose()}>
-      <DialogContent className="max-w-5xl bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-0 overflow-hidden border-green-200 dark:border-green-900 flex flex-col max-h-[90vh]">
-        <div className="sticky top-0 z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-green-100 dark:border-green-900 p-6">
+      <DialogContent className="max-w-5xl bg-gradient-to-br from-green-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-0 overflow-hidden border-green-200 dark:border-green-900 flex flex-col h-[85vh] sm:h-[85vh] w-[95vw] sm:w-auto">
+        <div className="sticky top-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-green-100 dark:border-green-900 p-4 sm:p-6">
           <DialogHeader className="flex flex-row items-center justify-between">
-            <DialogTitle className="text-3xl font-bold text-green-800 dark:text-green-400 flex items-center gap-3">
-              <div className="bg-green-100 dark:bg-green-900 p-2 rounded-full">
-                <Leaf className="h-8 w-8 text-green-600 dark:text-green-400" />
+            <DialogTitle className="text-xl sm:text-3xl font-bold text-green-800 dark:text-green-400 flex items-center gap-2 sm:gap-3">
+              <div className="bg-green-100 dark:bg-green-900 p-1 sm:p-2 rounded-full">
+                <Leaf className="h-5 w-5 sm:h-8 sm:w-8 text-green-600 dark:text-green-400" />
               </div>
-              {projectData.project_name}
+              <span className="truncate">{projectData.project_name}</span>
             </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </Button>
           </DialogHeader>
         </div>
 
-        <div className="p-6 overflow-y-auto flex-1">
+        <div className="flex flex-col flex-1 overflow-hidden">
           <Tabs
             defaultValue="overview"
             onValueChange={setCurrentTab}
-            className="space-y-6"
+            className="flex flex-col h-full"
           >
-            <TabsList className="grid w-full grid-cols-6 gap-2 p-1 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl sticky top-0 z-10">
-              <TabsTrigger
-                value="overview"
-                className="data-[state=active]:bg-green-100 dark:data-[state=active]:bg-green-900/50 data-[state=active]:text-green-800 dark:data-[state=active]:text-green-300"
-              >
-                Overview
-              </TabsTrigger>
-              <TabsTrigger
-                value="feasibility"
-                className="data-[state=active]:bg-blue-100 dark:data-[state=active]:bg-blue-900/50 data-[state=active]:text-blue-800 dark:data-[state=active]:text-blue-300"
-              >
-                Feasibility
-              </TabsTrigger>
-              <TabsTrigger
-                value="risks"
-                className="data-[state=active]:bg-amber-100 dark:data-[state=active]:bg-amber-900/50 data-[state=active]:text-amber-800 dark:data-[state=active]:text-amber-300"
-              >
-                Risks
-              </TabsTrigger>
-              <TabsTrigger
-                value="policy"
-                className="data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900/50 data-[state=active]:text-purple-800 dark:data-[state=active]:text-purple-300"
-              >
-                Policy
-              </TabsTrigger>
-              <TabsTrigger
-                value="funding"
-                className="data-[state=active]:bg-emerald-100 dark:data-[state=active]:bg-emerald-900/50 data-[state=active]:text-emerald-800 dark:data-[state=active]:text-emerald-300"
-              >
-                Funding
-              </TabsTrigger>
-              <TabsTrigger
-                value="gis"
-                className="data-[state=active]:bg-indigo-100 dark:data-[state=active]:bg-indigo-900/50 data-[state=active]:text-indigo-800 dark:data-[state=active]:text-indigo-300"
-              >
-                GIS Data
-              </TabsTrigger>
-            </TabsList>
+            <div className="px-4 sm:px-6 pt-3 sm:pt-4 sticky top-0 z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm">
+              {/* Mobile tabs (scrollable) */}
+              <div className="block sm:hidden overflow-x-auto pb-2">
+                <TabsList className="flex w-max space-x-2 p-1 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl">
+                  <TabsTrigger
+                    value="overview"
+                    className="data-[state=active]:bg-green-100 dark:data-[state=active]:bg-green-900/50 data-[state=active]:text-green-800 dark:data-[state=active]:text-green-300 whitespace-nowrap"
+                  >
+                    Overview
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="feasibility"
+                    className="data-[state=active]:bg-blue-100 dark:data-[state=active]:bg-blue-900/50 data-[state=active]:text-blue-800 dark:data-[state=active]:text-blue-300 whitespace-nowrap"
+                  >
+                    Feasibility
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="risks"
+                    className="data-[state=active]:bg-amber-100 dark:data-[state=active]:bg-amber-900/50 data-[state=active]:text-amber-800 dark:data-[state=active]:text-amber-300 whitespace-nowrap"
+                  >
+                    Risks
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="policy"
+                    className="data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900/50 data-[state=active]:text-purple-800 dark:data-[state=active]:text-purple-300 whitespace-nowrap"
+                  >
+                    Policy
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="funding"
+                    className="data-[state=active]:bg-emerald-100 dark:data-[state=active]:bg-emerald-900/50 data-[state=active]:text-emerald-800 dark:data-[state=active]:text-emerald-300 whitespace-nowrap"
+                  >
+                    Funding
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="gis"
+                    className="data-[state=active]:bg-indigo-100 dark:data-[state=active]:bg-indigo-900/50 data-[state=active]:text-indigo-800 dark:data-[state=active]:text-indigo-300 whitespace-nowrap"
+                  >
+                    GIS Data
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
-            <div className="h-[500px] overflow-y-auto pr-2">
+              {/* Desktop tabs (grid) */}
+              <div className="hidden sm:block">
+                <TabsList className="grid w-full grid-cols-6 gap-2 p-1 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl">
+                  <TabsTrigger
+                    value="overview"
+                    className="data-[state=active]:bg-green-100 dark:data-[state=active]:bg-green-900/50 data-[state=active]:text-green-800 dark:data-[state=active]:text-green-300"
+                  >
+                    Overview
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="feasibility"
+                    className="data-[state=active]:bg-blue-100 dark:data-[state=active]:bg-blue-900/50 data-[state=active]:text-blue-800 dark:data-[state=active]:text-blue-300"
+                  >
+                    Feasibility
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="risks"
+                    className="data-[state=active]:bg-amber-100 dark:data-[state=active]:bg-amber-900/50 data-[state=active]:text-amber-800 dark:data-[state=active]:text-amber-300"
+                  >
+                    Risks
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="policy"
+                    className="data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900/50 data-[state=active]:text-purple-800 dark:data-[state=active]:text-purple-300"
+                  >
+                    Policy
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="funding"
+                    className="data-[state=active]:bg-emerald-100 dark:data-[state=active]:bg-emerald-900/50 data-[state=active]:text-emerald-800 dark:data-[state=active]:text-emerald-300"
+                  >
+                    Funding
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="gis"
+                    className="data-[state=active]:bg-indigo-100 dark:data-[state=active]:bg-indigo-900/50 data-[state=active]:text-indigo-800 dark:data-[state=active]:text-indigo-300"
+                  >
+                    GIS Data
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-4 sm:px-6 pb-4">
               <AnimatePresence mode="wait">
                 {mounted && (
                   <motion.div
@@ -209,6 +248,7 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.2 }}
+                    className="py-4"
                   >
                     <TabsContent
                       value="overview"
@@ -266,38 +306,45 @@ export function ResultsModal({ projectData, onClose }: ResultsModalProps) {
           </Tabs>
         </div>
 
-        <div className="sticky bottom-0 z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-t border-green-100 dark:border-green-900 p-6 flex justify-between items-center">
-          <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+        <div className="sticky bottom-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-t border-green-100 dark:border-green-900 p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 flex items-center">
             <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
             Last updated:{" "}
-            {new Date(projectData.last_updated).toLocaleDateString(undefined, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
+            {projectData.last_updated
+              ? new Date(projectData.last_updated).toLocaleDateString(
+                  undefined,
+                  {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  }
+                )
+              : "Not available"}
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto">
             <Button
               variant="outline"
               onClick={handleDownloadPDF}
               disabled={isGeneratingPDF}
-              className="flex items-center gap-2 hover:bg-green-50"
+              className="flex items-center gap-2 hover:bg-green-50 dark:hover:bg-green-900/30 dark:border-green-700 dark:text-green-300 text-xs sm:text-sm flex-1 sm:flex-none"
             >
               {isGeneratingPDF ? (
                 <>
                   <span className="animate-spin">⏳</span>
-                  Generating Report...
+                  <span className="sm:block hidden">Generating Report...</span>
+                  <span className="sm:hidden block">Generating...</span>
                 </>
               ) : (
                 <>
                   <Download className="h-4 w-4" />
-                  Download Full Report
+                  <span className="sm:block hidden">Download Full Report</span>
+                  <span className="sm:hidden block">Download</span>
                 </>
               )}
             </Button>
             <Button
               onClick={onClose}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm flex-1 sm:flex-none"
             >
               Close
             </Button>

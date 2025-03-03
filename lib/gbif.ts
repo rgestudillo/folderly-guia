@@ -35,6 +35,7 @@ export async function handleGBIFGet(latitude: number, longitude: number, radius:
         }, {});
 
         return {
+            source: "GBIF",
             totalResults: data.count,
             speciesCount: Object.keys(speciesSummary).length,
             speciesSummary,
