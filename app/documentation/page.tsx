@@ -15,6 +15,9 @@ export default function DocumentationPage() {
             <section className="mb-12">
                 <h2 className="text-2xl font-semibold mb-4 text-green-700 dark:text-green-500">
                     Global Sustainability Frameworks
+                    <span className="ml-2 text-sm">
+                        <a href="https://sdgs.un.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" target="_blank" rel="noopener noreferrer">[SDGS.UN.ORG]</a>
+                    </span>
                 </h2>
 
                 <div className="mb-6 bg-green-50 dark:bg-gray-800 p-6 rounded-lg">
@@ -22,15 +25,18 @@ export default function DocumentationPage() {
                         <p className="text-gray-700 dark:text-gray-300">
                             The United Nations&apos; 17 Sustainable Development Goals provide a holistic framework for global sustainability efforts.
                             Adopted in 2015 as part of the UN&apos;s 2030 Agenda, the SDGs define 17 goals and 169 targets as a &quot;shared blueprint for
-                            peace and prosperity for people and the planet, now and into the future&quot;. The SDGs call for worldwide action to end
-                            poverty and improve health, education, and equality while tackling climate change and preserving oceans and forests.
+                            peace and prosperity for people and the planet, now and into the future&quot;
+                            <a href="https://sdgs.un.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[SDGS.UN.ORG]</a>.
+                            The SDGs call for worldwide action to end poverty and improve health, education, and equality while tackling climate change and preserving oceans and forests
+                            <a href="https://sdgs.un.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[SDGS.UN.ORG]</a>.
                         </p>
                     </div>
 
                     <p className="text-gray-700 dark:text-gray-300 mb-4">
                         IPCC Climate Reports complement these goals by assessing climate change risks and guiding global response.
                         The IPCC&apos;s assessments use a risk framework where climate-related risk emerges from the interaction of hazards
-                        (e.g. extreme weather), exposure (people and assets in harm&apos;s way), and vulnerability (susceptibility to damage).
+                        (e.g. extreme weather), exposure (people and assets in harm&apos;s way), and vulnerability (susceptibility to damage)
+                        <a href="https://www.ipcc.ch/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[IPCC.CH]</a>.
                         This framing helps quantify climate risks and inform adaptation strategies in line with sustainable development.
                     </p>
 
@@ -38,15 +44,21 @@ export default function DocumentationPage() {
                         Green building standards like LEED (Leadership in Energy and Environmental Design) translate broad goals into
                         practical criteria for buildings. LEED is a certification system with key categories (e.g. Sustainable Sites,
                         Water Efficiency, Energy & Atmosphere, Materials & Resources, Indoor Environmental Quality) in which projects
-                        earn points for meeting sustainable design benchmarks. A building must score at least 40 points to be LEED-certified,
-                        with higher tiers (Silver, Gold, Platinum) for more points.
+                        earn points for meeting sustainable design benchmarks
+                        <a href="https://www.escsi.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[ESCSI.ORG]</a>.
+                        A building must score at least 40 points to be LEED-certified,
+                        with higher tiers (Silver, Gold, Platinum) for more points
+                        <a href="https://www.escsi.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[ESCSI.ORG]</a>.
                     </p>
 
                     <p className="text-gray-700 dark:text-gray-300">
                         At the organizational level, ISO 14001 Environmental Management Systems (EMS) provide a structured framework for
                         continual environmental improvement. ISO 14001 is an international standard that uses a Plan-Do-Check-Act cycle:
                         organizations commit to an environmental policy, plan objectives and targets, implement changes, check performance,
-                        and then review and adjust plans in a repeating cycle. This EMS framework drives continuous improvement in compliance,
+                        and then review and adjust plans in a repeating cycle
+                        <a href="https://www.epa.gov/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[EPA.GOV]</a>
+                        <a href="https://www.epa.gov/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[EPA.GOV]</a>.
+                        This EMS framework drives continuous improvement in compliance,
                         pollution prevention, and resource efficiency. Together, these global frameworks (UN SDGs, IPCC risk assessments,
                         green building standards, and ISO EMS) supply the high-level principles, targets, and management systems that ground
                         a comprehensive sustainability assessment.
@@ -57,40 +69,54 @@ export default function DocumentationPage() {
             <section className="mb-12">
                 <h2 className="text-2xl font-semibold mb-4 text-green-700 dark:text-green-500">
                     Mathematical Models & Formulas
+                    <span className="ml-2 text-sm">
+                        <a href="https://egusphere.copernicus.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" target="_blank" rel="noopener noreferrer">[EGUSPHERE.COPERNICUS.ORG]</a>
+                    </span>
                 </h2>
 
                 <div className="mb-8">
                     <h3 className="text-xl font-medium mb-3 text-green-600 dark:text-green-400">
                         Risk Analysis Models for Hazards and Pollution
+                        <span className="ml-2 text-sm">
+                            <a href="https://egusphere.copernicus.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" target="_blank" rel="noopener noreferrer">[EGUSPHERE.COPERNICUS.ORG]</a>
+                        </span>
                     </h3>
                     <div className="bg-green-50 dark:bg-gray-800 p-6 rounded-lg">
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Quantitative models are essential for evaluating environmental risks such as floods, earthquakes, pollution,
                             and biodiversity threats. A common formula expresses risk as a product of likelihood and impact: for example,
                             <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 mx-1 rounded">Risk = Probability × Consequence</span>,
-                            meaning the chance of an event times the severity of its outcome.
+                            meaning the chance of an event times the severity of its outcome
+                            <a href="https://egusphere.copernicus.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[EGUSPHERE.COPERNICUS.ORG]</a>.
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             In disaster risk assessment, this concept is often expanded to account for hazard, exposure, and vulnerability.
                             For instance, climate and disaster researchers define
-                            <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 mx-1 rounded">Risk = Hazard × (Exposure × Vulnerability)</span>.
+                            <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 mx-1 rounded">Risk = Hazard × (Exposure × Vulnerability)</span>
+                            <a href="https://egusphere.copernicus.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[EGUSPHERE.COPERNICUS.ORG]</a>.
                             Here hazard is the potential event (flood, quake, etc.), exposure is the people or assets in harm&apos;s way, and
                             vulnerability is their susceptibility to damage (e.g. building fragility or community preparedness).
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             This multiplicative risk model is endorsed by IPCC and others as a way to identify how reducing exposure or
-                            vulnerability can lower overall risk. In seismic risk modeling, for example, a region&apos;s risk is &quot;determined by
-                            the combination of hazard, vulnerability and exposure,&quot; which together estimate expected damage over a given time frame.
+                            vulnerability can lower overall risk
+                            <a href="https://www.ipcc.ch/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[IPCC.CH]</a>.
+                            In seismic risk modeling, for example, a region&apos;s risk is &quot;determined by
+                            the combination of hazard, vulnerability and exposure,&quot; which together estimate expected damage over a given time frame
+                            <a href="https://www.protezionecivile.gov.it/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[PROTEZIONECIVILE.GOV.IT]</a>.
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300">
                             For pollution and health risk, environmental agencies use dose-response models and hazard quotients. The U.S. EPA&apos;s
                             risk assessment guidelines calculate a Risk Quotient (RQ) by comparing exposure to a toxin against its safe threshold:
                             <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 mx-1 rounded">RQ = Exposure / Toxicity</span>,
-                            where an RQ above 1 indicates a potential concern. This formulaic approach helps screen for high-risk pollution
-                            scenarios (e.g. if pollutant concentrations exceed what organisms or humans can safely tolerate).
+                            where an RQ above 1 indicates a potential concern
+                            <a href="https://www.epa.gov/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[EPA.GOV]</a>.
+                            This formulaic approach helps screen for high-risk pollution
+                            scenarios (e.g. if pollutant concentrations exceed what organisms or humans can safely tolerate). Similarly, biodiversity risk models use quantitative criteria – for example, the IUCN Red List assigns species to threat categories based on thresholds of population decline, range size, and other metrics
+                            <a href="https://docs.gbif.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[DOCS.GBIF.ORG]</a>.
                         </p>
                     </div>
                 </div>
@@ -98,27 +124,45 @@ export default function DocumentationPage() {
                 <div className="mb-8">
                     <h3 className="text-xl font-medium mb-3 text-green-600 dark:text-green-400">
                         Sustainability Scoring Formulas
+                        <span className="ml-2 text-sm">
+                            <a href="https://pvsustain.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" target="_blank" rel="noopener noreferrer">[PVSUSTAIN.ORG]</a>
+                        </span>
                     </h3>
                     <div className="bg-green-50 dark:bg-gray-800 p-6 rounded-lg">
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             To evaluate overall sustainability performance, composite scoring models and indices are widely used. Sustainability
                             indices aggregate multiple indicators (environmental, social, economic) into a single score to facilitate comparison
-                            or tracking over time. Research shows that well-chosen sustainability indicators and composite indices are &quot;useful
-                            tools for policy making and public communication,&quot; simplifying complex data and highlighting trends.
+                            or tracking over time
+                            <a href="https://pvsustain.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[PVSUSTAIN.ORG]</a>.
+                            Research shows that well-chosen sustainability indicators and composite indices are &quot;useful
+                            tools for policy making and public communication,&quot; simplifying complex data and highlighting trends
+                            <a href="https://pvsustain.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[PVSUSTAIN.ORG]</a>.
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             A typical approach is to normalize each indicator, apply weights, and sum or average them to yield a score. For example,
                             the UN SDG Index is computed by first scoring each of the 17 SDGs (averaging that goal&apos;s indicators) and then taking an
-                            average of all goal scores. This gives each country an index score on a 0–100 scale indicating its overall progress
-                            toward the SDGs.
+                            average of all goal scores
+                            <a href="https://dashboards.sdgindex.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[DASHBOARDS.SDGINDEX.ORG]</a>.
+                            This gives each country an index score on a 0–100 scale indicating its overall progress
+                            toward the SDGs
+                            <a href="https://dashboards.sdgindex.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[DASHBOARDS.SDGINDEX.ORG]</a>.
+                            The index design often uses equal weighting to treat all goals or dimensions equally
+                            <a href="https://dashboards.sdgindex.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[DASHBOARDS.SDGINDEX.ORG]</a>,
+                            though sensitivity analyses (e.g. using geometric means or Monte Carlo simulations) are done to test robustness
+                            <a href="https://dashboards.sdgindex.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[DASHBOARDS.SDGINDEX.ORG]</a>.
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300">
                             Another example is the Environmental Performance Index (EPI), which combines 40 environmental indicators into 11 issue
                             categories (e.g. air quality, water, biodiversity) and then into two high-level objectives (environmental health and
-                            ecosystem vitality). Countries are scored based on proximity-to-target for each indicator, enabling comparisons and
-                            ranking on a 0–100 scale.
+                            ecosystem vitality)
+                            <a href="https://earthdata.nasa.gov/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[EARTHDATA.NASA.GOV]</a>.
+                            Countries are scored based on proximity-to-target for each indicator, enabling comparisons and
+                            ranking on a 0–100 scale
+                            <a href="https://earthdata.nasa.gov/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[EARTHDATA.NASA.GOV]</a>.
+                            These scoring formulas rely on methods like linear aggregation, weighted averages, or multi-criteria decision analysis. Multi-criteria decision analysis (MCDA) methods (such as AHP or simple additive weighting) are frequently employed to assign scores in sustainability appraisals
+                            <a href="https://www.mdpi.com/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[MDPI.COM]</a>.
                         </p>
                     </div>
                 </div>
@@ -126,27 +170,33 @@ export default function DocumentationPage() {
                 <div>
                     <h3 className="text-xl font-medium mb-3 text-green-600 dark:text-green-400">
                         Feasibility Assessment Models for Sustainable Projects
+                        <span className="ml-2 text-sm">
+                            <a href="https://www.researchgate.net/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" target="_blank" rel="noopener noreferrer">[RESEARCHGATE.NET]</a>
+                        </span>
                     </h3>
                     <div className="bg-green-50 dark:bg-gray-800 p-6 rounded-lg">
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Assessing the feasibility of sustainable projects involves extending traditional project evaluation models to include
                             environmental and social criteria. Classic feasibility studies examine technical viability, cost-benefit analysis, and
                             return on investment. Sustainable feasibility models build on this by incorporating the &quot;triple bottom line&quot; of economic,
-                            environmental, and social performance.
+                            environmental, and social performance
+                            <a href="https://www.researchgate.net/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[RESEARCHGATE.NET]</a>.
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             For example, researchers have proposed conceptual models where project feasibility is judged not only on financial metrics
-                            but also on criteria like greenhouse gas reduction, community benefits, and regulatory compliance. One such model integrated
-                            sustainability considerations into the early feasibility phase for construction projects, adding environmental and social
-                            performance indicators alongside cost and time criteria.
+                            but also on criteria like greenhouse gas reduction, community benefits, and regulatory compliance
+                            <a href="https://www.researchgate.net/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[RESEARCHGATE.NET]</a>.
+                            One such model integrated sustainability considerations into the early feasibility phase for construction projects, adding environmental and social
+                            performance indicators alongside cost and time criteria
+                            <a href="https://www.researchgate.net/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[RESEARCHGATE.NET]</a>.
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300">
                             By evaluating these factors together, decision-makers can identify trade-offs (e.g. a design with higher upfront cost but
                             much lower carbon footprint) and overall project viability in sustainability terms. Risk assessment is also folded into
                             feasibility for sustainable projects – e.g. analyzing climate risks that could impact a project&apos;s long-term success
-                            (such as flood risk for infrastructure).
+                            (such as flood risk for infrastructure). Life Cycle Assessment (LCA) and Life Cycle Costing (LCC) are often combined to judge whether a project is feasible when considering its full life-cycle environmental impacts and costs.
                         </p>
                     </div>
                 </div>
@@ -155,30 +205,44 @@ export default function DocumentationPage() {
             <section className="mb-12">
                 <h2 className="text-2xl font-semibold mb-4 text-green-700 dark:text-green-500">
                     Scientific Research & Case Studies
+                    <span className="ml-2 text-sm">
+                        <a href="https://pvsustain.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" target="_blank" rel="noopener noreferrer">[PVSUSTAIN.ORG]</a>
+                    </span>
                 </h2>
 
                 <div className="mb-8">
                     <h3 className="text-xl font-medium mb-3 text-green-600 dark:text-green-400">
                         Sustainability Measurement Methodologies
+                        <span className="ml-2 text-sm">
+                            <a href="https://pvsustain.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" target="_blank" rel="noopener noreferrer">[PVSUSTAIN.ORG]</a>
+                        </span>
                     </h3>
                     <div className="bg-green-50 dark:bg-gray-800 p-6 rounded-lg">
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             A growing body of scientific research focuses on how to measure and quantify sustainability. Studies and review papers
                             have compiled numerous sustainability metrics and methods, comparing their effectiveness. For instance, Singh et al. (2009)
                             provide an overview of sustainability assessment methodologies, highlighting how various indices are formulated through
-                            indicator selection, normalization, weighting, and aggregation.
+                            indicator selection, normalization, weighting, and aggregation
+                            <a href="https://pvsustain.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[PVSUSTAIN.ORG]</a>.
+                            They note that many initiatives are converging on indicator frameworks to track sustainable development
+                            <a href="https://pvsustain.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[PVSUSTAIN.ORG]</a>.
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Methodologies like Life Cycle Sustainability Assessment (LCSA) extend traditional life cycle analysis by evaluating
                             environmental, economic, and social impacts together – this has been discussed in literature as a comprehensive way to
-                            gauge product or project sustainability.
+                            gauge product or project sustainability
+                            <a href="https://www.mdpi.com/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[MDPI.COM]</a>
+                            <a href="https://www.mdpi.com/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[MDPI.COM]</a>.
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300">
                             Another stream of research looks at enterprise sustainability assessments and ESG (Environmental, Social, Governance)
-                            scoring, reviewing methods to rate corporate sustainability performance. Common themes in the literature include the need
-                            for robust indicators, transparent scoring formulas, and addressing uncertainty in measurements.
+                            scoring, reviewing methods to rate corporate sustainability performance
+                            <a href="https://www.researchgate.net/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[RESEARCHGATE.NET]</a>
+                            <a href="https://www.mdpi.com/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[MDPI.COM]</a>.
+                            Common themes in the literature include the need
+                            for robust indicators, transparent scoring formulas, and addressing uncertainty in measurements. Researchers also emphasize aligning measurement tools with global frameworks (for example, mapping indicators to SDGs or planetary boundaries).
                         </p>
                     </div>
                 </div>
@@ -186,12 +250,17 @@ export default function DocumentationPage() {
                 <div>
                     <h3 className="text-xl font-medium mb-3 text-green-600 dark:text-green-400">
                         Case Studies of Sustainability Evaluations
+                        <span className="ml-2 text-sm">
+                            <a href="https://www.researchgate.net/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" target="_blank" rel="noopener noreferrer">[RESEARCHGATE.NET]</a>
+                        </span>
                     </h3>
                     <div className="bg-green-50 dark:bg-gray-800 p-6 rounded-lg">
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Real-world case studies illustrate how sustainability assessment frameworks are applied in practice. In the building sector,
                             for example, comparative studies have evaluated how different green building rating systems perform on the same project.
-                            One case study analyzed a building using LEED, BREEAM, and CASBEE criteria side by side, revealing how each framework
+                            One case study analyzed a building using LEED, BREEAM, and CASBEE criteria side by side
+                            <a href="https://www.researchgate.net/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[RESEARCHGATE.NET]</a>,
+                            revealing how each framework
                             scores aspects of sustainability (energy use, materials, indoor environment) and highlighting their differences.
                         </p>
 
@@ -199,14 +268,17 @@ export default function DocumentationPage() {
                             Other case studies focus on project-level evaluations: A study of multiple high-rise buildings constructed with sustainable
                             timber assessed each building across environmental, social, and economic dimensions. The findings showed that no single
                             building outperformed in all sustainability categories; each had unique strengths, underscoring the multi-dimensional
-                            nature of sustainability trade-offs.
+                            nature of sustainability trade-offs
+                            <a href="https://www.mdpi.com/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[MDPI.COM]</a>.
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300">
                             In infrastructure and urban planning, case studies often document sustainability appraisal of projects like transportation
                             systems or flood management initiatives. For instance, a post-project sustainability evaluation might use a complex systems
                             approach to see if an implemented project (say, a transit system) delivered expected benefits in reduced emissions, improved
-                            mobility, and community wellbeing.
+                            mobility, and community wellbeing. Case studies also highlight feasibility aspects: a WWF mid-term evaluation of a sustainability project
+                            <a href="https://wwfeu.awsassets.panda.org/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[WWFEU.AWSASSETS.PANDA.ORG]</a>
+                            or a UN-Habitat SDG Project Assessment pilot are examples where real projects are scored and analyzed, demonstrating methodology in action.
                         </p>
                     </div>
                 </div>
@@ -215,24 +287,30 @@ export default function DocumentationPage() {
             <section>
                 <h2 className="text-2xl font-semibold mb-4 text-green-700 dark:text-green-500">
                     Integration with API Data
+                    <span className="ml-2 text-sm">
+                        <a href="https://hivo.co/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" target="_blank" rel="noopener noreferrer">[HIVO.CO]</a>
+                    </span>
                 </h2>
 
                 <div className="mb-8">
                     <h3 className="text-xl font-medium mb-3 text-green-600 dark:text-green-400">
                         Structuring API Data for Sustainability Models
+                        <span className="ml-2 text-sm">
+                            <a href="https://hivo.co/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" target="_blank" rel="noopener noreferrer">[HIVO.CO]</a>
+                        </span>
                     </h3>
                     <div className="bg-green-50 dark:bg-gray-800 p-6 rounded-lg">
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Modern sustainability assessments increasingly rely on live or granular data from various sources, often accessed via APIs.
                             Best practices for structuring API data ensure that this information can be seamlessly integrated into scoring models.
-                            One key practice is adopting standardized data formats and schemas across sources.
+                            One key practice is adopting standardized data formats and schemas across sources
+                            <a href="https://hivo.co/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[HIVO.CO]</a>.
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Because different environmental APIs (for weather, air quality, water, etc.) may have their own data structures, aligning
-                            them to a common format (e.g. using consistent units, timestamps, and field names) greatly simplifies integration.
-                            Organizations and standards bodies are working on open data standards for environmental information to facilitate this
-                            compatibility.
+                            them to a common format (e.g. using consistent units, timestamps, and field names) greatly simplifies integration
+                            <a href="https://hivo.co/" className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1" target="_blank" rel="noopener noreferrer">[HIVO.CO]</a>.
                         </p>
 
                         <p className="text-gray-700 dark:text-gray-300">
