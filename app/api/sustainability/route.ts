@@ -12,6 +12,7 @@ import { ProjectData } from '@/types/project';
 import { sustainabilitySystemPrompt } from '@/lib/openai/sustainability-prompt';
 import { handleNASAPowerDailyGet } from '@/lib/api/1_climate_weather_data/nasa-power-daily';
 import { handleDisasterGet } from '@/lib/api/3_disaster_risk_hazard_data/disaster';
+import { handlePollenGet } from '@/lib/api/3_disaster_risk_hazard_data/pollen';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -53,7 +54,8 @@ export async function POST(request: Request) {
       nearbyPlacesData,
       weatherData,
       dailyClimateData,
-      disasterData
+      disasterData,
+      pollenData
     ] = await Promise.all([
       handleAirQualityPost(latitude, longitude),
       handleSolarGet(latitude, longitude),
@@ -63,7 +65,8 @@ export async function POST(request: Request) {
       handleNearbyPlaceCounts(latitude, longitude, radius),
       handleWeatherStatistics(latitude, longitude),
       handleNASAPowerDailyGet(latitude, longitude),
-      handleDisasterGet(latitude, longitude) 
+      handleDisasterGet(latitude, longitude),
+      handlePollenGet(latitude, longitude, 1)
     ]);
 
     // Aggregate the results into a single JSON response.
@@ -75,13 +78,14 @@ export async function POST(request: Request) {
       nearbyPlaces: nearbyPlacesData,
       weather: weatherData,
       climateData: dailyClimateData,
-      disasters: disasterData 
+      disasters: disasterData,
+      pollen: pollenData 
     };
 
     const apiContext = `aggregatedData ${JSON.stringify(aggregatedData, null, 2)}`;
 
     console.log("OPENAI PROMPT: ",
-      `LOCATION:  \n${location_name}
+      `LOCATION: \n${location_name}
       \n\nPROJECT: \n${projectIdea}
       \n\nPROJECT RADIUS: \n${radius} meters\n\n
       API CONTEXT: \n${apiContext}\n`
