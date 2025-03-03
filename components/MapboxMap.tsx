@@ -26,7 +26,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   onCenterChange,
   rotateMap = false,
 }) => {
-  // Maintain local center state to preserve updates from marker dragging.
+  // Maintain a local center state to keep updates from marker dragging.
   const [currentCenter, setCurrentCenter] = useState(center);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -49,7 +49,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
     map.on("load", () => {
-      // Add DEM source for 3D terrain
+      // Add DEM source for 3D terrain.
       map.addSource("mapbox-dem", {
         type: "raster-dem",
         url: "mapbox://mapbox.mapbox-terrain-dem-v1",
@@ -59,6 +59,38 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       map.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
       map.setPitch(45);
 
+      // Hide default landuse layers to prevent them from conflicting
+      // with our custom landuse layer.
+      const defaultLanduseLayers = ["landuse", "landuse_overlay"];
+      defaultLanduseLayers.forEach((layerId) => {
+        if (map.getLayer(layerId)) {
+          map.setLayoutProperty(layerId, "visibility", "none");
+        }
+      });
+
+      // Add custom landuse layer using the composite source's "landuse" data.
+      // Adjust the colors and landuse types as desired.
+      map.addLayer({
+        id: "custom-landuse",
+        type: "fill",
+        source: "composite",
+        "source-layer": "landuse",
+        paint: {
+          "fill-color": [
+            "match",
+            ["get", "class"],
+            "park", "#a8e6a3",       // parks: light green
+            "residential", "#f5f5dc", // residential: beige
+            "commercial", "#ffd700",  // commercial: gold
+            "industrial", "#d3d3d3",  // industrial: light gray
+            "forest", "#228B22",      // forest: forest green
+            /* default */ "#cccccc"
+          ],
+          "fill-opacity": 0.5,
+        },
+      });
+
+      // Determine a label layer for insertion reference.
       let labelLayerId: string | undefined;
       const style = map.getStyle();
       const layers = style?.layers || [];
@@ -74,6 +106,8 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
           }
         }
       }
+
+      // Add the 3D buildings layer.
       map.addLayer(
         {
           id: "add-3d-buildings",
@@ -108,7 +142,13 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         labelLayerId
       );
 
-      // Fly from initial view to target center and zoom.
+      // Move our custom landuse layer behind the 3D buildings so that
+      // extruded buildings appear on top.
+      if (map.getLayer("add-3d-buildings")) {
+        map.moveLayer("custom-landuse", "add-3d-buildings");
+      }
+
+      // Fly from the initial view to the target center and zoom.
       map.flyTo({
         center: [currentCenter.lng, currentCenter.lat],
         zoom: finalZoom,
@@ -116,11 +156,12 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         easing: (t) => t,
       });
 
-      // Create and add circle source and layers.
-      const circleFeature = turfCircle([currentCenter.lng, currentCenter.lat], radius, {
-        steps: 64,
-        units: "meters",
-      });
+      // Create and add a circle source and its layers.
+      const circleFeature = turfCircle(
+        [currentCenter.lng, currentCenter.lat],
+        radius,
+        { steps: 64, units: "meters" }
+      );
       map.addSource("circle", {
         type: "geojson",
         data: circleFeature,
@@ -146,9 +187,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         },
       });
 
-      // Draggable radius adjustment is disabled.
-      // The code for "circle-outline-hit" and its events has been removed.
-
       // Add a draggable center marker.
       const centerMarker = new mapboxgl.Marker({
         draggable: true,
@@ -160,20 +198,15 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
 
       centerMarker.on("dragend", () => {
         const newCenter = centerMarker.getLngLat();
-        // Update local state so that the new center persists.
         setCurrentCenter({ lat: newCenter.lat, lng: newCenter.lng });
         const updatedCircle = turfCircle(
           [newCenter.lng, newCenter.lat],
           radius,
-          {
-            steps: 64,
-            units: "meters",
-          }
+          { steps: 64, units: "meters" }
         );
         (map.getSource("circle") as mapboxgl.GeoJSONSource).setData(
           updatedCircle
         );
-
         if (onCenterChange) {
           onCenterChange({ lat: newCenter.lat, lng: newCenter.lng });
         }
@@ -188,17 +221,16 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   // Update the circle and recenter the view when the center or radius change.
   useEffect(() => {
     if (mapRef.current && centerMarkerRef.current) {
-      // Use currentCenter so the updated position is maintained.
       centerMarkerRef.current.setLngLat([currentCenter.lng, currentCenter.lat]);
-      const updatedCircle = turfCircle([currentCenter.lng, currentCenter.lat], radius, {
-        steps: 64,
-        units: "meters",
-      });
+      const updatedCircle = turfCircle(
+        [currentCenter.lng, currentCenter.lat],
+        radius,
+        { steps: 64, units: "meters" }
+      );
       (mapRef.current.getSource("circle") as mapboxgl.GeoJSONSource).setData(
         updatedCircle
       );
 
-      // Compute the bounding box for the circle.
       const bounds = turfBbox(updatedCircle);
       const cameraOptions = mapRef.current.cameraForBounds(
         [bounds[0], bounds[1], bounds[2], bounds[3]] as mapboxgl.LngLatBoundsLike,
@@ -214,18 +246,16 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     }
   }, [currentCenter, radius]);
 
-  // Rotate the map if rotateMap is true.
+  // Optional: Rotate the map if rotateMap is true.
   useEffect(() => {
     if (!mapRef.current) return;
     let animationFrameId: number;
     let currentBearing = mapRef.current.getBearing();
-
-    const smoothFactor = 0.05; // Controls recentering speed.
-    const smoothFactorZoom = 0.05; // Controls zoom interpolation speed.
+    const smoothFactor = 0.05;
+    const smoothFactorZoom = 0.05;
 
     const rotate = () => {
-      currentBearing = (currentBearing + 0.1) % 360; // Adjust rotation speed.
-
+      currentBearing = (currentBearing + 0.1) % 360;
       if (centerMarkerRef.current && mapRef.current) {
         const markerPos = centerMarkerRef.current.getLngLat();
         const currentCenterVal = mapRef.current.getCenter();
@@ -237,11 +267,11 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
             currentCenterVal.lat +
             (markerPos.lat - currentCenterVal.lat) * smoothFactor,
         };
-
-        const newCircle = turfCircle([newCenter.lng, newCenter.lat], radius, {
-          steps: 64,
-          units: "meters",
-        });
+        const newCircle = turfCircle(
+          [newCenter.lng, newCenter.lat],
+          radius,
+          { steps: 64, units: "meters" }
+        );
         const bounds = turfBbox(newCircle);
         const cameraOptions = mapRef.current.cameraForBounds(
           [bounds[0], bounds[1], bounds[2], bounds[3]] as mapboxgl.LngLatBoundsLike,
@@ -254,7 +284,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
             currentZoom + (desiredZoom - currentZoom) * smoothFactorZoom;
           mapRef.current.setZoom(newZoom);
         }
-
         mapRef.current.setCenter(newCenter);
       }
       mapRef.current?.setBearing(currentBearing);
