@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { handleAirQualityPost } from '@/lib/api/2_air_pollution_data/air-quality';
+import { handleAirQualityPost } from '@/lib/api/4_air_pollution_data/air-quality';
 import { handleSolarGet } from '@/lib/api/1_climate_weather_data/solar';
-import { handleGBIFGet } from '@/lib/api/2_air_pollution_data/gbif';
-import { handleSoilData } from '@/lib/api/2_air_pollution_data/soil-data';
+import { handleGBIFGet } from '@/lib/api/2_bio_ecosystem_data/gbif';
+import { handleSoilData } from '@/lib/api/2_bio_ecosystem_data/soil-data';
 import { getLocationImages } from '@/lib/location-images';
 import { sustainabilitySchema } from '@/lib/openai/sustainability-schema';
 import { handleNearbyPlaceCounts } from '@/lib/nearby-places';
