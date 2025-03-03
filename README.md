@@ -1,5 +1,7 @@
 # 🌱 Folderly Guia: Sustainable Project Planning Assistant
 
+![Sustainability Assessment Framework](./image.png)
+
 ## 🚀 Project Overview
 
 Folderly Guia is an innovative web application designed to help urban planners, developers, and environmentalists make data-driven decisions about sustainable project planning. By analyzing geographical data, environmental factors, and sustainability metrics, our platform provides comprehensive insights to ensure projects are environmentally sound and economically viable.
