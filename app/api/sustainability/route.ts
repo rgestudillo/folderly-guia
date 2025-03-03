@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
-import { handleAirQualityPost } from '@/lib/air-quality';
-import { handleSolarGet } from '@/lib/solar';
-import { handleGBIFGet } from '@/lib/gbif';
-import { handleSoilData } from '@/lib/soil-data';
+import { handleAirQualityPost } from '@/lib/api/4_air_pollution_data/air-quality';
+import { handleSolarGet } from '@/lib/api/1_climate_weather_data/solar';
+import { handleGBIFGet } from '@/lib/api/2_bio_ecosystem_data/gbif';
+import { handleSoilData } from '@/lib/api/2_bio_ecosystem_data/soil-data';
 import { getLocationImages } from '@/lib/location-images';
-import { sustainabilitySchema } from '@/lib/schemas/sustainability-schema';
+import { sustainabilitySchema } from '@/lib/openai/sustainability-schema';
 import { handleNearbyPlaceCounts } from '@/lib/nearby-places';
-import { handleWeatherStatistics } from '@/lib/weather-statistics';
+import { handleWeatherStatistics } from '@/lib/api/1_climate_weather_data/weather-statistics';
 import OpenAI from "openai";
 import { ProjectData } from '@/types/project';
-import { sustainabilitySystemPrompt } from '@/lib/prompts/sustainability-prompt';
-import { handleNASAPowerDailyGet } from '@/lib/nasa-power-daily';
+import { sustainabilitySystemPrompt } from '@/lib/openai/sustainability-prompt';
+import { handleNASAPowerDailyGet } from '@/lib/api/1_climate_weather_data/nasa-power-daily';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -35,7 +35,12 @@ export async function POST(request: Request) {
     const city = location_name.split(",")[0]?.trim() || "Unknown City";
     const country = location_name.split(",").slice(-1)[0]?.trim() || "Unknown Country";
     const radius = body.radius || 1000;
-    const projectName = `Project ${projectIdea} in ${location_name}`;
+    const projectName = `Project ${projectIdea}`;
+
+    console.log("project name is: " + projectName);
+    console.log("latitude is: " + latitude);
+    console.log("longitude is: " + longitude);
+    console.log("radius is: " + radius);
 
     // Execute all API calls concurrently.
     // Note: Soil data expects radius in kilometers.
@@ -53,13 +58,11 @@ export async function POST(request: Request) {
       handleSolarGet(latitude, longitude),
       handleGBIFGet(latitude, longitude),
       getLocationImages(latitude, longitude),
-      handleSoilData(latitude, longitude, radius / 1000),       // Convert radius from meters to km.
-      handleNearbyPlaceCounts(latitude, longitude, radius),       // Nearby places expects meters.
-      handleWeatherStatistics(latitude, longitude),              // Weather data.
+      handleSoilData(latitude, longitude, radius / 1000),
+      handleNearbyPlaceCounts(latitude, longitude, radius),
+      handleWeatherStatistics(latitude, longitude),
       handleNASAPowerDailyGet(latitude, longitude)
     ]);
-
-    console.log("Daily Climate Data:", JSON.stringify(dailyClimateData, null, 2));
 
 
     // Aggregate the results into a single JSON response.
@@ -72,9 +75,14 @@ export async function POST(request: Request) {
       weather: weatherData,
       climateData: dailyClimateData,
     };
-
     const apiContext = `aggregatedData ${JSON.stringify(aggregatedData, null, 2)}`;
-    console.log("api context is: ", apiContext);
+
+    console.log("OPENAI PROMPT: ",
+      `LOCATION:  \n${location_name}
+      \n\nPROJECT: \n${projectIdea}
+      \n\nPROJECT RADIUS: \n${radius} meters\n\n
+      API CONTEXT: \n${apiContext}\n`
+    )
 
     // Generate project data using OpenAI.
     const response = await openai.chat.completions.create({
