@@ -2,10 +2,7 @@
 
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
-import {
-  circle as turfCircle,
-  bbox as turfBbox,
-} from "@turf/turf";
+import { circle as turfCircle, bbox as turfBbox } from "@turf/turf";
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
@@ -35,13 +32,15 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    const initialZoom = 0.5;
+    // Set initial view to cover the Philippines.
+    const philippinesCenter = { lat: 12.8797, lng: 121.7740 };
+    const initialZoom = 5; // A zoom level that shows the Philippines
     const finalZoom = zoom;
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
-      center: [currentCenter.lng, currentCenter.lat],
+      center: [philippinesCenter.lng, philippinesCenter.lat],
       zoom: initialZoom,
     });
     mapRef.current = map;
@@ -59,8 +58,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       map.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
       map.setPitch(45);
 
-      // Hide default landuse layers to prevent them from conflicting
-      // with our custom landuse layer.
+      // Hide default landuse layers.
       const defaultLanduseLayers = ["landuse", "landuse_overlay"];
       defaultLanduseLayers.forEach((layerId) => {
         if (map.getLayer(layerId)) {
@@ -69,7 +67,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       });
 
       // Add custom landuse layer using the composite source's "landuse" data.
-      // Adjust the colors and landuse types as desired.
       map.addLayer({
         id: "custom-landuse",
         type: "fill",
@@ -79,18 +76,63 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
           "fill-color": [
             "match",
             ["get", "class"],
-            "park", "#a8e6a3",       // parks: light green
-            "residential", "#f5f5dc", // residential: beige
-            "commercial", "#ffd700",  // commercial: gold
-            "industrial", "#d3d3d3",  // industrial: light gray
-            "forest", "#228B22",      // forest: forest green
+            // Transportation
+            "aerodrome", "#FF8A65",
+            "highway", "#FF8A65",
+            "parking", "#FF8A65",
+            "railway", "#FF8A65", 
+            // Agriculture
+            "allotments", "#AED581",
+            "aquaculture", "#AED581",
+            "farmland", "#AED581",
+            "farmyard", "#AED581",
+            "forest", "#AED581",
+            "orchard", "#AED581",
+            "greenhouse_horticulture", "#AED581",
+            "meadow", "#AED581",
+            "plant_nursery", "#AED581",
+            "vineyard", "#AED581",
+            // Water
+            "basin", "#81D4FA",
+            "salt_pond", "#81D4FA",
+            // Natural or Developed
+            "beach", "#FFB74D",
+            "beach_resort", "#FFB74D",  
+            "cemetery", "#A1887F",
+            "grave_yard", "#A1887F",
+            // Developed
+            "brownfield", "#90A4AE",
+            "construction", "#90A4AE",
+            "commercial", "#90A4AE",
+            "college", "#90A4AE",
+            "hospital", "#90A4AE",
+            "industrial", "#90A4AE",
+            "landfill", "#90A4AE",
+            "quarry", "#90A4AE",
+            "recreation_ground", "#90A4AE",
+            "religious", "#90A4AE",
+            "residential", "#90A4AE",
+            "retail", "#90A4AE",
+            "school", "#90A4AE",
+            "university", "#90A4AE",
+            "wastewater_plant", "#90A4AE",
+            // Leisure
+            "garden", "#FFF59D",
+            "national_park", "#FFF59D",
+            "nature_reserve", "#FFF59D",
+            "park", "#FFF59D",
+            "village_green", "#FFF59D",
+            // Other
+            "greenfield", "#CE93D8",
+            // Military
+            "military", "#F48FB1",
             /* default */ "#cccccc"
           ],
-          "fill-opacity": 0.5,
+          "fill-opacity": 1,
         },
       });
 
-      // Determine a label layer for insertion reference.
+      // Identify a label layer for proper insertion.
       let labelLayerId: string | undefined;
       const style = map.getStyle();
       const layers = style?.layers || [];
@@ -142,17 +184,16 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         labelLayerId
       );
 
-      // Move our custom landuse layer behind the 3D buildings so that
-      // extruded buildings appear on top.
+      // Move the custom landuse layer behind the 3D buildings.
       if (map.getLayer("add-3d-buildings")) {
         map.moveLayer("custom-landuse", "add-3d-buildings");
       }
 
-      // Fly from the initial view to the target center and zoom.
+      // Fly from the Philippines view to the target center.
       map.flyTo({
         center: [currentCenter.lng, currentCenter.lat],
         zoom: finalZoom,
-        duration: 4000,
+        duration: 2500,
         easing: (t) => t,
       });
 
@@ -218,7 +259,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     };
   }, []); // Run once on mount
 
-  // Update the circle and recenter the view when the center or radius change.
   useEffect(() => {
     if (mapRef.current && centerMarkerRef.current) {
       centerMarkerRef.current.setLngLat([currentCenter.lng, currentCenter.lat]);
@@ -246,7 +286,6 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     }
   }, [currentCenter, radius]);
 
-  // Optional: Rotate the map if rotateMap is true.
   useEffect(() => {
     if (!mapRef.current) return;
     let animationFrameId: number;
