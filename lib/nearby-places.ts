@@ -3,8 +3,6 @@ export async function handleNearbyPlaceCounts(
     longitude: number,
     radius: number
   ) {
-    console.log("radius: " + radius);
-
     try {
       const googleApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
       if (!googleApiKey) {

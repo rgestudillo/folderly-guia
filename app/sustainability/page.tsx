@@ -59,7 +59,7 @@ export default function SustainabilityPage() {
         throw new Error("Failed to fetch aggregated data");
       }
       const data: ProjectData = await response.json();
-      console.log(data);
+      // console.log(data);
       setAggregatedData(data);
       setShowResults(true);
     } catch (error) {

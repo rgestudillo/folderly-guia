@@ -34,7 +34,12 @@ export async function POST(request: Request) {
     const city = location_name.split(",")[0]?.trim() || "Unknown City";
     const country = location_name.split(",").slice(-1)[0]?.trim() || "Unknown Country";
     const radius = body.radius || 1000;
-    const projectName = `Project ${projectIdea} in ${location_name}`;
+    const projectName = `${projectIdea} in ${location_name}`;
+
+    console.log("project name is: " + projectName);
+    console.log("latitude is: " + latitude);
+    console.log("longitude is: " + longitude);
+    console.log("radius is: " + radius);
     
     // Execute all API calls concurrently.
     // Note: Soil data expects radius in kilometers.
@@ -66,9 +71,13 @@ export async function POST(request: Request) {
       nearbyPlaces: nearbyPlacesData,
       weather: weatherData,
     };
-
     const apiContext = `aggregatedData ${JSON.stringify(aggregatedData, null, 2)}`;
-    console.log("api context is: " ,apiContext);
+    console.log("OPENAI PROMPT: " , 
+      `LOCATION:  \n${location_name}
+      \n\nPROJECT: \n${projectIdea}
+      \n\nPROJECT RADIUS: \n${radius} meters\n\n
+      API CONTEXT: \n${apiContext}\n`
+    )
 
     // Generate project data using OpenAI.
     const response = await openai.chat.completions.create({
