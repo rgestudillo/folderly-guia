@@ -57,11 +57,11 @@ export async function handleAirQualityPost(latitude: number, longitude: number) 
 
     // Extract only the AQI and dominant pollutant from the first index.
     const parsedData = data.indexes && data.indexes.length > 0 ? {
-        source: "Google Air Quality API",
-        aqi: data.indexes[0].aqi,
-        category: data.indexes[0].category,
-        dominantPollutant: data.indexes[0].dominantPollutant
-      } : null;
+      source: "Google Air Quality API",
+      aqi: data.indexes[0].aqi,
+      category: data.indexes[0].category,
+      dominantPollutant: data.indexes[0].dominantPollutant
+    } : null;
 
     return parsedData;
   } catch (error: any) {

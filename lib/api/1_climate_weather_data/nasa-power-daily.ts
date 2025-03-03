@@ -35,7 +35,10 @@ export async function handleNASAPowerDailyGet(latitude: number, longitude: numbe
             throw new Error(`Error fetching NASA POWER data. Status: ${response.status}`);
         }
         const data = await response.json();
-        return data;
+        return {
+            source: "NASA POWER Daily API",
+            data: data
+        }
     } catch (error: any) {
         console.error("handleNASAPowerDailyGet error:", error);
         return { error: error.message };
