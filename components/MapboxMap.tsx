@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import {
   circle as turfCircle,
-  distance as turfDistance,
   bbox as turfBbox,
 } from "@turf/turf";
 
@@ -27,10 +26,11 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   onCenterChange,
   rotateMap = false,
 }) => {
+  // Maintain local center state to preserve updates from marker dragging.
+  const [currentCenter, setCurrentCenter] = useState(center);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const centerMarkerRef = useRef<mapboxgl.Marker | null>(null);
-  const isDraggingArcRef = useRef(false);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -41,7 +41,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
-      center: [center.lng, center.lat],
+      center: [currentCenter.lng, currentCenter.lat],
       zoom: initialZoom,
     });
     mapRef.current = map;
@@ -110,14 +110,14 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
 
       // Fly from initial view to target center and zoom.
       map.flyTo({
-        center: [center.lng, center.lat],
+        center: [currentCenter.lng, currentCenter.lat],
         zoom: finalZoom,
         duration: 4000,
         easing: (t) => t,
       });
 
       // Create and add circle source and layers.
-      const circleFeature = turfCircle([center.lng, center.lat], radius, {
+      const circleFeature = turfCircle([currentCenter.lng, currentCenter.lat], radius, {
         steps: 64,
         units: "meters",
       });
@@ -146,28 +146,22 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         },
       });
 
-      map.addLayer({
-        id: "circle-outline-hit",
-        type: "line",
-        source: "circle",
-        paint: {
-          "line-color": "#000000",
-          "line-opacity": 0,
-          "line-width": 40,
-        },
-      });
+      // Draggable radius adjustment is disabled.
+      // The code for "circle-outline-hit" and its events has been removed.
 
       // Add a draggable center marker.
       const centerMarker = new mapboxgl.Marker({
         draggable: true,
         color: "#00FF00",
       })
-        .setLngLat([center.lng, center.lat])
+        .setLngLat([currentCenter.lng, currentCenter.lat])
         .addTo(map);
       centerMarkerRef.current = centerMarker;
 
       centerMarker.on("dragend", () => {
         const newCenter = centerMarker.getLngLat();
+        // Update local state so that the new center persists.
+        setCurrentCenter({ lat: newCenter.lat, lng: newCenter.lng });
         const updatedCircle = turfCircle(
           [newCenter.lng, newCenter.lat],
           radius,
@@ -184,79 +178,19 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
           onCenterChange({ lat: newCenter.lat, lng: newCenter.lng });
         }
       });
-
-      map.on("mousedown", "circle-outline-hit", (e) => {
-        e.preventDefault();
-        isDraggingArcRef.current = true;
-        map.getCanvas().style.cursor = "ew-resize";
-
-        map.on("mousemove", onArcDrag);
-        map.once("mouseup", onArcDragEnd);
-      });
     });
-
-    const onArcDrag = (e: mapboxgl.MapMouseEvent) => {
-      if (
-        !isDraggingArcRef.current ||
-        !mapRef.current ||
-        !centerMarkerRef.current
-      )
-        return;
-      const map = mapRef.current;
-      const centerCoords = centerMarkerRef.current.getLngLat();
-      const pointerLngLat = map.unproject(e.point);
-      const newRadius = turfDistance(
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [centerCoords.lng, centerCoords.lat],
-          },
-          properties: {},
-        },
-        {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: [pointerLngLat.lng, pointerLngLat.lat],
-          },
-          properties: {},
-        },
-        { units: "meters" }
-      );
-
-      const updatedCircle = turfCircle(
-        [centerCoords.lng, centerCoords.lat],
-        newRadius,
-        { steps: 64, units: "meters" }
-      );
-      (map.getSource("circle") as mapboxgl.GeoJSONSource).setData(
-        updatedCircle
-      );
-
-      if (onRadiusChange) {
-        onRadiusChange(newRadius);
-      }
-    };
-
-    const onArcDragEnd = () => {
-      if (!mapRef.current) return;
-      isDraggingArcRef.current = false;
-      mapRef.current.getCanvas().style.cursor = "";
-      mapRef.current.off("mousemove", onArcDrag);
-    };
 
     return () => {
       map.remove();
     };
   }, []); // Run once on mount
 
-  // When center or radius change, update the circle and smoothly transition the zoom
-  // so that the circle (fitting the given radius) is in view.
+  // Update the circle and recenter the view when the center or radius change.
   useEffect(() => {
     if (mapRef.current && centerMarkerRef.current) {
-      centerMarkerRef.current.setLngLat([center.lng, center.lat]);
-      const updatedCircle = turfCircle([center.lng, center.lat], radius, {
+      // Use currentCenter so the updated position is maintained.
+      centerMarkerRef.current.setLngLat([currentCenter.lng, currentCenter.lat]);
+      const updatedCircle = turfCircle([currentCenter.lng, currentCenter.lat], radius, {
         steps: 64,
         units: "meters",
       });
@@ -266,70 +200,52 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
 
       // Compute the bounding box for the circle.
       const bounds = turfBbox(updatedCircle);
-      // Get the camera options required to fit the bounds (this returns {center, zoom, pitch, bearing}).
       const cameraOptions = mapRef.current.cameraForBounds(
-        [
-          bounds[0],
-          bounds[1],
-          bounds[2],
-          bounds[3],
-        ] as mapboxgl.LngLatBoundsLike,
-        {
-          padding: 20,
-        }
+        [bounds[0], bounds[1], bounds[2], bounds[3]] as mapboxgl.LngLatBoundsLike,
+        { padding: 20 }
       );
       if (cameraOptions) {
-        // Smoothly transition the zoom (and center) so that the entire circle fits the view.
         mapRef.current.easeTo({
-          center: [center.lng, center.lat],
+          center: [currentCenter.lng, currentCenter.lat],
           zoom: cameraOptions.zoom,
-          duration: 2000,
+          duration: 700,
         });
       }
     }
-  }, [center, radius]);
+  }, [currentCenter, radius]);
 
   // Rotate the map if rotateMap is true.
-  // Instead of snapping the center instantly, we interpolate the center toward the pinned marker.
   useEffect(() => {
     if (!mapRef.current) return;
     let animationFrameId: number;
     let currentBearing = mapRef.current.getBearing();
 
-    const smoothFactor = 0.05; // Adjust recentering speed (0 = no recentering, 1 = instant).
-    const smoothFactorZoom = 0.05; // Adjust zoom interpolation speed.
+    const smoothFactor = 0.05; // Controls recentering speed.
+    const smoothFactorZoom = 0.05; // Controls zoom interpolation speed.
 
     const rotate = () => {
-      currentBearing = (currentBearing + 0.7) % 360; // Adjust rotation speed as desired.
+      currentBearing = (currentBearing + 0.1) % 360; // Adjust rotation speed.
 
       if (centerMarkerRef.current && mapRef.current) {
         const markerPos = centerMarkerRef.current.getLngLat();
-        const currentCenter = mapRef.current.getCenter();
+        const currentCenterVal = mapRef.current.getCenter();
         const newCenter = {
           lng:
-            currentCenter.lng +
-            (markerPos.lng - currentCenter.lng) * smoothFactor,
+            currentCenterVal.lng +
+            (markerPos.lng - currentCenterVal.lng) * smoothFactor,
           lat:
-            currentCenter.lat +
-            (markerPos.lat - currentCenter.lat) * smoothFactor,
+            currentCenterVal.lat +
+            (markerPos.lat - currentCenterVal.lat) * smoothFactor,
         };
 
-        // Compute the desired zoom level by creating a new circle with the updated center and provided radius.
         const newCircle = turfCircle([newCenter.lng, newCenter.lat], radius, {
           steps: 64,
           units: "meters",
         });
         const bounds = turfBbox(newCircle);
         const cameraOptions = mapRef.current.cameraForBounds(
-          [
-            bounds[0],
-            bounds[1],
-            bounds[2],
-            bounds[3],
-          ] as mapboxgl.LngLatBoundsLike,
-          {
-            padding: 20,
-          }
+          [bounds[0], bounds[1], bounds[2], bounds[3]] as mapboxgl.LngLatBoundsLike,
+          { padding: 20 }
         );
         if (cameraOptions) {
           const currentZoom = mapRef.current.getZoom();

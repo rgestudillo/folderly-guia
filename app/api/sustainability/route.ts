@@ -7,10 +7,11 @@ import { getLocationImages } from '@/lib/location-images';
 import { sustainabilitySchema } from '@/lib/openai/sustainability-schema';
 import { handleNearbyPlaceCounts } from '@/lib/nearby-places';
 import { handleWeatherStatistics } from '@/lib/api/1_climate_weather_data/weather-statistics';
+import { handleNASAPowerDailyGet } from '@/lib/api/1_climate_weather_data/nasa-power-daily';
+import { handleOverpassGet } from '@/lib/api/5_renewable_infrastructure_data/overpass';
 import OpenAI from "openai";
 import { ProjectData } from '@/types/project';
 import { sustainabilitySystemPrompt } from '@/lib/openai/sustainability-prompt';
-import { handleNASAPowerDailyGet } from '@/lib/api/1_climate_weather_data/nasa-power-daily';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -19,10 +20,8 @@ const openai = new OpenAI({
 
 export async function POST(request: Request) {
   try {
-    // Parse the JSON body from the incoming request.
     const body = await request.json();
 
-    // Validate that the required location fields are provided.
     if (!body.location || body.location.latitude === undefined || body.location.longitude === undefined) {
       return NextResponse.json(
         { error: 'Request body must include a "location" object with "latitude" and "longitude" properties.' },
@@ -52,7 +51,8 @@ export async function POST(request: Request) {
       soilData,
       nearbyPlacesData,
       weatherData,
-      dailyClimateData
+      dailyClimateData,
+      overpassData  // This returns a JSON object containing the full results and a summary.
     ] = await Promise.all([
       handleAirQualityPost(latitude, longitude),
       handleSolarGet(latitude, longitude),
@@ -61,11 +61,12 @@ export async function POST(request: Request) {
       handleSoilData(latitude, longitude, radius / 1000),
       handleNearbyPlaceCounts(latitude, longitude, radius),
       handleWeatherStatistics(latitude, longitude),
-      handleNASAPowerDailyGet(latitude, longitude)
+      handleNASAPowerDailyGet(latitude, longitude),
+      handleOverpassGet(latitude, longitude, radius)
     ]);
 
-
     // Aggregate the results into a single JSON response.
+    // Insert only the summary from the infrastructure data.
     const aggregatedData = {
       airQuality: airQualityData,
       solar: solarData,
@@ -74,15 +75,13 @@ export async function POST(request: Request) {
       nearbyPlaces: nearbyPlacesData,
       weather: weatherData,
       climateData: dailyClimateData,
+      infrastructure: overpassData.summary, // Only the summarized infrastructure info.
     };
     const apiContext = `aggregatedData ${JSON.stringify(aggregatedData, null, 2)}`;
 
     console.log("OPENAI PROMPT: ",
-      `LOCATION:  \n${location_name}
-      \n\nPROJECT: \n${projectIdea}
-      \n\nPROJECT RADIUS: \n${radius} meters\n\n
-      API CONTEXT: \n${apiContext}\n`
-    )
+      `LOCATION: \n${location_name}\n\nPROJECT:\n${projectIdea}\n\nPROJECT RADIUS:\n${radius} meters\n\nAPI CONTEXT:\n${apiContext}\n`
+    );
 
     // Generate project data using OpenAI.
     const response = await openai.chat.completions.create({
@@ -117,10 +116,9 @@ export async function POST(request: Request) {
       frequency_penalty: 0,
       presence_penalty: 0
     });
-    // Parse the OpenAI response.
+
     const projectData = JSON.parse(response.choices[0].message.content || '{}') as ProjectData;
 
-    // Update with actual location data and images.
     const updatedProjectData = {
       ...projectData,
       project_name: projectName,
