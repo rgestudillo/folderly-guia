@@ -5,6 +5,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 

@@ -5,8 +5,9 @@ import { Leaf } from "lucide-react";
 
 export function LoadingAnimation() {
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl flex flex-col items-center max-w-md w-full">
+    <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+      {/* Note: Inner box background is semi-transparent (50% opacity) but text remains fully opaque */}
+      <div className="bg-white/70 dark:bg-gray-800/70 p-8 rounded-xl shadow-xl flex flex-col items-center max-w-md w-full">
         <div className="relative mb-6">
           <motion.div
             className="absolute inset-0 rounded-full"
@@ -25,9 +26,7 @@ export function LoadingAnimation() {
           </motion.div>
 
           <motion.div
-            animate={{
-              rotate: 360,
-            }}
+            animate={{ rotate: 360 }}
             transition={{
               duration: 4,
               repeat: Infinity,
