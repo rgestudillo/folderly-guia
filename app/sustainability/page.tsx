@@ -22,6 +22,7 @@ export default function SustainabilityPage() {
     null
   );
   const [isLoadingResults, setIsLoadingResults] = useState(false);
+  const [rawData, setRawData] = useState<any>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -42,7 +43,29 @@ export default function SustainabilityPage() {
   const handleConfirm = async () => {
     setIsLoadingResults(true);
     try {
-      const response = await fetch("/api/sustainability", {
+      // First, get the raw data
+      const rawDataResponse = await fetch("/api/raw-data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          location: {
+            latitude: projectData.coordinates.lat,
+            longitude: projectData.coordinates.lng,
+            location_name: projectData.location,
+          },
+          radius: projectData.radius,
+        }),
+      });
+
+      if (!rawDataResponse.ok) {
+        throw new Error("Failed to fetch raw data");
+      }
+
+      const rawData = await rawDataResponse.json();
+      setRawData(rawData);
+
+      // Then, use the raw data for sustainability analysis
+      const sustainabilityResponse = await fetch("/api/sustainability", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -53,13 +76,15 @@ export default function SustainabilityPage() {
           },
           project_idea: projectData.idea,
           radius: projectData.radius,
+          raw_data: rawData,
         }),
       });
-      if (!response.ok) {
+
+      if (!sustainabilityResponse.ok) {
         throw new Error("Failed to fetch aggregated data");
       }
-      const data: ProjectData = await response.json();
-      // console.log(data);
+
+      const data: ProjectData = await sustainabilityResponse.json();
       setAggregatedData(data);
       setShowResults(true);
     } catch (error) {
@@ -118,7 +143,12 @@ export default function SustainabilityPage() {
         )}
       </div>
 
-      {isLoadingResults && <LoadingAnimation />}
+      {isLoadingResults && (
+        <LoadingAnimation
+          rawData={rawData}
+          aggregatedData={aggregatedData}
+        />
+      )}
 
       {showResults && aggregatedData && (
         <ResultsModal
