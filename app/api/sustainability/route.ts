@@ -10,6 +10,7 @@ import { handleWeatherStatistics } from '@/lib/weather-statistics';
 import OpenAI from "openai";
 import { ProjectData } from '@/types/project';
 import { sustainabilitySystemPrompt } from '@/lib/prompts/sustainability-prompt';
+import { handleNASAPowerDailyGet } from '@/lib/nasa-power-daily';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
     const country = location_name.split(",").slice(-1)[0]?.trim() || "Unknown Country";
     const radius = body.radius || 1000;
     const projectName = `Project ${projectIdea} in ${location_name}`;
-    
+
     // Execute all API calls concurrently.
     // Note: Soil data expects radius in kilometers.
     const [
@@ -46,6 +47,7 @@ export async function POST(request: Request) {
       soilData,
       nearbyPlacesData,
       weatherData,
+      dailyClimateData
     ] = await Promise.all([
       handleAirQualityPost(latitude, longitude),
       handleSolarGet(latitude, longitude),
@@ -54,7 +56,10 @@ export async function POST(request: Request) {
       handleSoilData(latitude, longitude, radius / 1000),       // Convert radius from meters to km.
       handleNearbyPlaceCounts(latitude, longitude, radius),       // Nearby places expects meters.
       handleWeatherStatistics(latitude, longitude),              // Weather data.
+      handleNASAPowerDailyGet(latitude, longitude)
     ]);
+
+    console.log("Daily Climate Data:", JSON.stringify(dailyClimateData, null, 2));
 
 
     // Aggregate the results into a single JSON response.
@@ -65,10 +70,11 @@ export async function POST(request: Request) {
       soil: soilData,
       nearbyPlaces: nearbyPlacesData,
       weather: weatherData,
+      climateData: dailyClimateData,
     };
 
     const apiContext = `aggregatedData ${JSON.stringify(aggregatedData, null, 2)}`;
-    console.log("api context is: " ,apiContext);
+    console.log("api context is: ", apiContext);
 
     // Generate project data using OpenAI.
     const response = await openai.chat.completions.create({
