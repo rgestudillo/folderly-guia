@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     const city = location_name.split(",")[0]?.trim() || "Unknown City";
     const country = location_name.split(",").slice(-1)[0]?.trim() || "Unknown Country";
     const radius = body.radius || 1000;
-    const projectName = `${projectIdea} in ${location_name}`;
+    const projectName = `Project ${projectIdea}`;
 
     console.log("project name is: " + projectName);
     console.log("latitude is: " + latitude);
