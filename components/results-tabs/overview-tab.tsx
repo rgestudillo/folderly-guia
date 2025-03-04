@@ -26,6 +26,33 @@ type SustainabilityCategory =
   | "Renewable Energy & Infrastructure Feasibility";
 
 export function OverviewTab({ projectData }: OverviewTabProps) {
+
+  // Calculate overall score based on raw scores and weights
+  const calculateOverallScore = () => {
+    let overallScore = 0;
+
+    Object.entries(projectData.sustainability_score.scores).forEach(([key, scoreData]) => {
+      const category = key as SustainabilityCategory;
+      const weight = projectData.sustainability_score.weights[category].weight;
+      const rawScore = scoreData.raw_score;
+
+      // Add the weighted score to the overall score
+      overallScore += rawScore * weight;
+    });
+
+    // Round to 1 decimal place
+    return Math.round(overallScore * 10) / 10;
+  };
+
+  // Calculate weighted score for a category
+  const calculateWeightedScore = (rawScore: number, weight: number) => {
+    // Calculate weighted score and round to 1 decimal place
+    return Math.round((rawScore * weight) * 10) / 10;
+  };
+
+  // Get the calculated overall score
+  const calculatedOverallScore = calculateOverallScore();
+
   const getScoreColor = (score: number) => {
     if (score >= 7.5)
       return "bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800";
@@ -36,9 +63,9 @@ export function OverviewTab({ projectData }: OverviewTabProps) {
     return "bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800";
   };
 
-  const getFeasibilityRating = (score: number) => {
-    if (score >= 7.5) return "Feasible";
-    if (score >= 5) return "Partially Feasible";
+  const getSustainabilityRating = (score: number) => {
+    if (score >= 7.5) return "Sustainable";
+    if (score >= 5) return "Partially Sustainable";
     if (score >= 2.5) return "Partially Not Feasible";
     return "Not Feasible";
   };
@@ -80,23 +107,35 @@ export function OverviewTab({ projectData }: OverviewTabProps) {
           </div>
           Project Summary
         </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-md border border-green-100 dark:border-green-800 flex flex-col items-center justify-center text-center">
             <span className="text-sm text-gray-500 dark:text-gray-400 mb-1">
               Sustainability Score
             </span>
-            <span
-              className={`text-xl font-bold px-2 py-1 rounded ${projectData.sustainability_score.overall_score >= 7.5
-                ? "text-green-600 dark:text-green-400"
-                : projectData.sustainability_score.overall_score >= 5
-                  ? "text-blue-600 dark:text-blue-400"
-                  : projectData.sustainability_score.overall_score >= 2.5
-                    ? "text-amber-600 dark:text-amber-400"
-                    : "text-red-600 dark:text-red-400"
-                }`}
-            >
-              {projectData.sustainability_score.overall_score.toFixed(1)}/10
-            </span>
+            <div className="flex flex-col items-center">
+              <span
+                className={`text-xl font-bold px-2 py-1 rounded ${calculatedOverallScore >= 7.5
+                  ? "text-green-600 dark:text-green-400"
+                  : calculatedOverallScore >= 5
+                    ? "text-blue-600 dark:text-blue-400"
+                    : calculatedOverallScore >= 2.5
+                      ? "text-amber-600 dark:text-amber-400"
+                      : "text-red-600 dark:text-red-400"
+                  }`}
+              >
+                {calculatedOverallScore.toFixed(1)}/10
+              </span>
+              <span className={`text-xs font-medium mt-1 px-2 py-0.5 rounded ${calculatedOverallScore >= 7.5
+                ? "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300"
+                : calculatedOverallScore >= 5
+                  ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
+                  : calculatedOverallScore >= 2.5
+                    ? "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300"
+                    : "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300"
+                }`}>
+                {getSustainabilityRating(calculatedOverallScore)}
+              </span>
+            </div>
           </div>
 
           <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-md border border-blue-100 dark:border-blue-800 flex flex-col items-center justify-center text-center">
@@ -134,15 +173,6 @@ export function OverviewTab({ projectData }: OverviewTabProps) {
                 {riskCounts.low} Low
               </span>
             </div>
-          </div>
-
-          <div className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-md border border-emerald-100 dark:border-emerald-800 flex flex-col items-center justify-center text-center">
-            <span className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-              Funding Available
-            </span>
-            <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-              ${totalFunding.toLocaleString()}
-            </span>
           </div>
         </div>
       </motion.div>
@@ -209,145 +239,206 @@ export function OverviewTab({ projectData }: OverviewTabProps) {
         </h3>
 
         {/* Score Overview */}
-        <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-100 dark:border-blue-800">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3">
-            <div>
-              <h4 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Overall Sustainability Score</h4>
-              <Badge
-                variant="outline"
-                className={`text-sm sm:text-base md:text-lg px-3 py-1 ${getScoreColor(
-                  projectData.sustainability_score.overall_score
-                )}`}
-              >
-                {projectData.sustainability_score.overall_score.toFixed(1)} - {getFeasibilityRating(projectData.sustainability_score.overall_score)}
-              </Badge>
+        <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 p-5 rounded-lg border border-blue-100 dark:border-blue-800">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+            <div className="flex flex-col">
+              <h4 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">Overall Sustainability Score</h4>
+              <div className="flex items-center gap-3">
+                <div
+                  className={`bg-white dark:bg-gray-700 rounded-full h-16 w-16 flex items-center justify-center border-4 shadow-sm ${calculatedOverallScore >= 7.5
+                    ? "border-green-400 dark:border-green-500"
+                    : calculatedOverallScore >= 5
+                      ? "border-blue-400 dark:border-blue-500"
+                      : calculatedOverallScore >= 2.5
+                        ? "border-amber-400 dark:border-amber-500"
+                        : "border-red-400 dark:border-red-500"
+                    }`}
+                >
+                  <span className="text-xl font-bold">
+                    {calculatedOverallScore.toFixed(1)}
+                  </span>
+                </div>
+                <div className="flex flex-col">
+                  <Badge
+                    variant="outline"
+                    className={`text-sm px-3 py-1 mb-1 ${getScoreColor(
+                      calculatedOverallScore
+                    )}`}
+                  >
+                    {getSustainabilityRating(calculatedOverallScore)}
+                  </Badge>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    Score out of 10
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500 dark:text-gray-400">Score Range:</span>
-              <div className="flex items-center gap-1">
-                <span className="w-3 h-3 rounded-full bg-red-500"></span>
-                <span className="text-xs">0-2.5</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
-                <span className="text-xs">2.5-5</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-                <span className="text-xs">5-7.5</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <span className="w-3 h-3 rounded-full bg-green-500"></span>
-                <span className="text-xs">7.5-10</span>
+            <div className="flex flex-col items-end gap-1 bg-white dark:bg-gray-700 p-2 rounded-md border border-blue-100 dark:border-blue-800">
+              <span className="text-xs font-medium text-blue-700 dark:text-blue-300">Score Range:</span>
+              <div className="flex items-center gap-2 mt-1">
+                <div className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded-full bg-red-500"></span>
+                  <span className="text-xs">0-2.5</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
+                  <span className="text-xs">2.5-5</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+                  <span className="text-xs">5-7.5</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded-full bg-green-500"></span>
+                  <span className="text-xs">7.5-10</span>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="relative w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5 mb-4">
+          <div className="relative w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3 mb-5">
             <div
-              className="bg-gradient-to-r from-red-500 via-yellow-500 via-blue-500 to-green-500 h-2.5 rounded-full"
+              className="bg-gradient-to-r from-red-500 via-yellow-500 via-blue-500 to-green-500 h-3 rounded-full"
               style={{ width: `100%` }}
             ></div>
             <div
-              className="absolute top-0 w-3 h-3 bg-white border-2 border-blue-600 dark:border-blue-400 rounded-full transform -translate-y-1/4"
-              style={{ left: `${(projectData.sustainability_score.overall_score / 10) * 100}%`, marginLeft: '-4px' }}
+              className="absolute top-0 w-4 h-4 bg-white border-2 border-blue-600 dark:border-blue-400 rounded-full transform -translate-y-1/4 shadow-md"
+              style={{ left: `${(calculatedOverallScore / 10) * 100}%`, marginLeft: '-6px' }}
             ></div>
           </div>
 
           {/* Score Formula */}
-          <div className="mt-4 bg-white dark:bg-gray-700 p-3 rounded-md border border-blue-100 dark:border-blue-800">
-            <h4 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2 flex items-center gap-1">
-              <Calculator className="h-3.5 w-3.5" />
+          <div className="mt-5 bg-white dark:bg-gray-700 p-4 rounded-md border border-blue-100 dark:border-blue-800">
+            <h4 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-1">
+              <Calculator className="h-4 w-4" />
               Score Calculation Formula
             </h4>
             <div className="overflow-x-auto">
-              <div className="text-xs font-mono text-gray-700 dark:text-gray-300 whitespace-nowrap">
+              <div className="flex flex-wrap gap-2 items-center text-sm font-mono text-gray-700 dark:text-gray-300">
                 {Object.entries(projectData.sustainability_score.scores).map(([key, scoreData], index) => {
                   const category = key as SustainabilityCategory;
                   const weight = projectData.sustainability_score.weights[category].weight;
                   return (
-                    <span key={key}>
-                      ({scoreData.raw_score.toFixed(1)} × {weight.toFixed(2)})
-                      {index < Object.entries(projectData.sustainability_score.scores).length - 1 ? " + " : ""}
-                    </span>
+                    <div key={key} className="flex items-center">
+                      <span className="bg-gray-100 dark:bg-gray-600 px-2 py-1 rounded">
+                        {scoreData.raw_score.toFixed(1)}
+                      </span>
+                      <span className="mx-1">×</span>
+                      <span className="bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded text-blue-700 dark:text-blue-300">
+                        {weight.toFixed(2)}
+                      </span>
+                      {index < Object.entries(projectData.sustainability_score.scores).length - 1 ? (
+                        <span className="mx-1">+</span>
+                      ) : (
+                        <span className="mx-1">=</span>
+                      )}
+                    </div>
                   );
-                })} = {projectData.sustainability_score.overall_score.toFixed(1)}
+                })}
+                <span className="bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded font-bold text-green-700 dark:text-green-300">
+                  {calculatedOverallScore.toFixed(1)}
+                </span>
               </div>
             </div>
-            <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              <span className="italic">Raw scores are multiplied by their respective weights and summed to calculate the overall sustainability score.</span>
+            <div className="mt-3 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-600 p-2 rounded">
+              <span className="flex items-center gap-1">
+                <Info className="h-3.5 w-3.5" />
+                Raw scores are multiplied by their respective weights and summed to calculate the overall sustainability score.
+              </span>
             </div>
           </div>
         </div>
 
         {/* Category Scores */}
         <div>
-          <h4 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-1">
+          <h4 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-4 flex items-center gap-1">
             <BarChart2 className="h-4 w-4" />
             Category Breakdown
           </h4>
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Object.entries(projectData.sustainability_score.scores).map(
               ([key, scoreData], index) => {
                 const category = key as SustainabilityCategory;
                 const weight = projectData.sustainability_score.weights[category].weight;
+                const weightedScore = calculateWeightedScore(scoreData.raw_score, weight);
+                const maxWeightedScore = weight * 10;
+                const scorePercentage = (weightedScore / maxWeightedScore) * 100;
+
                 return (
                   <motion.div
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.2, delay: 0.1 * index }}
                     key={key}
-                    className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-100 dark:border-gray-600 hover:shadow-sm transition-shadow"
+                    className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-100 dark:border-gray-600 hover:shadow-md transition-shadow"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center justify-between gap-2 mb-3">
                       <div className="flex items-center gap-2">
-                        <div className="bg-yellow-100 dark:bg-yellow-900/30 p-1.5 rounded-full">
-                          <Star className="h-4 w-4 text-yellow-500 dark:text-yellow-400" />
+                        <div className={`p-2 rounded-full ${weightedScore >= weight * 7.5
+                          ? "bg-green-100 dark:bg-green-900/30"
+                          : weightedScore >= weight * 5
+                            ? "bg-blue-100 dark:bg-blue-900/30"
+                            : weightedScore >= weight * 2.5
+                              ? "bg-amber-100 dark:bg-amber-900/30"
+                              : "bg-red-100 dark:bg-red-900/30"
+                          }`}>
+                          <Star className={`h-4 w-4 ${weightedScore >= weight * 7.5
+                            ? "text-green-500 dark:text-green-400"
+                            : weightedScore >= weight * 5
+                              ? "text-blue-500 dark:text-blue-400"
+                              : weightedScore >= weight * 2.5
+                                ? "text-amber-500 dark:text-amber-400"
+                                : "text-red-500 dark:text-red-400"
+                            }`} />
                         </div>
                         <span className="font-medium text-gray-800 dark:text-gray-200">{category}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge
                           variant="outline"
-                          className={`${getScoreColor(scoreData.weighted_score)}`}
+                          className={`${getScoreColor(weightedScore)}`}
                         >
-                          {scoreData.weighted_score.toFixed(1)}/{(weight * 10).toFixed(1)}
+                          {weightedScore.toFixed(1)}/{maxWeightedScore.toFixed(1)}
                         </Badge>
-                        <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-600 px-2 py-0.5 rounded">
+                      </div>
+                    </div>
+
+                    {/* Category Progress Bar with percentage */}
+                    <div className="mb-3">
+                      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
+                        <span>Progress: {scorePercentage.toFixed(0)}%</span>
+                        <span className="bg-gray-100 dark:bg-gray-600 px-2 py-0.5 rounded">
                           Weight: {(weight * 100).toFixed(0)}%
                         </span>
                       </div>
+                      <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                        <div
+                          className={`h-2.5 rounded-full ${weightedScore >= weight * 7.5
+                            ? "bg-green-500 dark:bg-green-400"
+                            : weightedScore >= weight * 5
+                              ? "bg-blue-500 dark:bg-blue-400"
+                              : weightedScore >= weight * 2.5
+                                ? "bg-amber-500 dark:bg-amber-400"
+                                : "bg-red-500 dark:bg-red-400"
+                            }`}
+                          style={{ width: `${scorePercentage}%` }}
+                        ></div>
+                      </div>
                     </div>
 
-                    {/* Category Progress Bar */}
-                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-1.5 mb-3">
-                      <div
-                        className={`h-1.5 rounded-full ${scoreData.weighted_score >= weight * 7.5
-                          ? "bg-green-500 dark:bg-green-400"
-                          : scoreData.weighted_score >= weight * 5
-                            ? "bg-blue-500 dark:bg-blue-400"
-                            : scoreData.weighted_score >= weight * 2.5
-                              ? "bg-yellow-500 dark:bg-yellow-400"
-                              : "bg-red-500 dark:bg-red-400"
-                          }`}
-                        style={{ width: `${(scoreData.weighted_score / (weight * 10)) * 100}%` }}
-                      ></div>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-4 mt-3">
+                    <div className="flex flex-col gap-3 mt-3">
                       <div className="flex-1">
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Raw Score: {scoreData.raw_score.toFixed(1)}/10</div>
+                        <div className="flex justify-between mb-1">
+                          <div className="text-xs text-gray-500 dark:text-gray-400">Raw Score: {scoreData.raw_score.toFixed(1)}/10</div>
+                          <div className="text-xs font-mono bg-white dark:bg-gray-800 px-2 py-0.5 rounded border border-gray-100 dark:border-gray-600">
+                            {scoreData.raw_score.toFixed(1)} × {weight.toFixed(2)} = {weightedScore.toFixed(1)}
+                          </div>
+                        </div>
                         <p className="text-sm text-gray-600 dark:text-gray-300">
                           {projectData.sustainability_score.weights[category].justification}
                         </p>
-                      </div>
-                      <div className="sm:w-1/3 bg-white dark:bg-gray-800 p-2 rounded border border-gray-100 dark:border-gray-600 text-xs">
-                        <div className="font-medium text-gray-700 dark:text-gray-300 mb-1">Calculation:</div>
-                        <div className="font-mono text-gray-600 dark:text-gray-400">
-                          {scoreData.raw_score.toFixed(1)} × {weight.toFixed(2)} = {scoreData.weighted_score.toFixed(1)}
-                        </div>
                       </div>
                     </div>
                   </motion.div>

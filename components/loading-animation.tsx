@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Sprout, Sun, Cloud, Wind, Droplets, Thermometer, Loader2, Globe, AlertTriangle, Map, AlertCircle, Clock } from "lucide-react";
+import { Sprout, Leaf, Sun, Cloud, Wind, Droplets, Thermometer, Loader2, Globe, AlertTriangle, Map, AlertCircle, Clock } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface LoadingAnimationProps {
@@ -49,12 +49,6 @@ export function LoadingAnimation({ rawData, aggregatedData }: LoadingAnimationPr
       name: "Air Quality",
       color: "from-purple-500 to-pink-500",
       data: rawData?.airQuality
-    },
-    {
-      icon: Wind,
-      name: "Pollen Data",
-      color: "from-purple-500 to-pink-500",
-      data: rawData?.pollen
     },
     {
       icon: AlertTriangle,
@@ -144,7 +138,7 @@ export function LoadingAnimation({ rawData, aggregatedData }: LoadingAnimationPr
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
           <div className="flex items-center space-x-3">
             <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-2 rounded-lg shadow-sm">
-              <Sprout className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              <Leaf className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
             <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-200">
               Analyzing Sustainability Data

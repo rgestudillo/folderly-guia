@@ -181,7 +181,7 @@ export const sustainabilitySchema = {
                 },
                 "summary": {
                   "type": "string",
-                  "description": "A brief summary of the API context data."
+                  "description": "A brief summary of the API context data. I want it to use the actual data from the API."
                 }
               },
               "additionalProperties": false
@@ -263,7 +263,8 @@ export const sustainabilitySchema = {
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "description": "Key findings from the feasibility report. I want it to be completely related to the project and the sustainability score."
           },
           "recommendations": {
             "type": "array",

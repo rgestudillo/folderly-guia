@@ -62,19 +62,12 @@ export function FundingTab({ projectData }: FundingTabProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, delay: 0.1 * index }}
             key={index}
-            className={`rounded-lg border p-5 hover:shadow-md transition-all ${
-              isDeadlineApproaching(opportunity.application_deadline)
-                ? "bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"
-                : "bg-gray-50 border-gray-200 dark:bg-gray-700 dark:border-gray-600"
-            }`}
+            className="rounded-lg border p-5 hover:shadow-md transition-all bg-gray-50 border-gray-200 dark:bg-gray-700 dark:border-gray-600"
           >
-            <div className="flex justify-between items-start mb-3">
+            <div className="mb-3">
               <h4 className="font-medium text-lg dark:text-gray-200">
                 {opportunity.name}
               </h4>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1 rounded-full text-sm">
-                {opportunity.amount}
-              </span>
             </div>
 
             <div className="space-y-3 mb-4">
@@ -86,24 +79,6 @@ export function FundingTab({ projectData }: FundingTabProps) {
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {opportunity.eligibility}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2">
-                <Calendar className="h-4 w-4 text-gray-500 dark:text-gray-400 mt-1" />
-                <div>
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Deadline
-                  </p>
-                  <p
-                    className={`text-sm ${
-                      isDeadlineApproaching(opportunity.application_deadline)
-                        ? "text-amber-600 dark:text-amber-400 font-medium"
-                        : "text-gray-600 dark:text-gray-400"
-                    }`}
-                  >
-                    {formatDeadline(opportunity.application_deadline)}
                   </p>
                 </div>
               </div>
