@@ -58,6 +58,12 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
       map.setTerrain({ source: "mapbox-dem", exaggeration: 1.5 });
       map.setPitch(45);
 
+      // Add custom tileset
+      map.addSource("custom-tileset", {
+        type: "vector",
+        url: "mapbox://kylegwapse.6xzf3tvp"
+      });
+
       // Hide default landuse layers.
       const defaultLanduseLayers = ["landuse", "landuse_overlay"];
       defaultLanduseLayers.forEach((layerId) => {
@@ -80,7 +86,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
             "aerodrome", "#FF8A65",
             "highway", "#FF8A65",
             "parking", "#FF8A65",
-            "railway", "#FF8A65", 
+            "railway", "#FF8A65",
             // Agriculture
             "allotments", "#AED581",
             "aquaculture", "#AED581",
@@ -97,7 +103,7 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
             "salt_pond", "#81D4FA",
             // Natural or Developed
             "beach", "#FFB74D",
-            "beach_resort", "#FFB74D",  
+            "beach_resort", "#FFB74D",
             "cemetery", "#A1887F",
             "grave_yard", "#A1887F",
             // Developed
@@ -130,6 +136,19 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
           ],
           "fill-opacity": 1,
         },
+      });
+
+      // Add custom tileset layer
+      map.addLayer({
+        id: "custom-tileset-layer",
+        type: "fill",
+        source: "custom-tileset",
+        "source-layer": "PH072200000_FH_5yr-3zjmex",
+        paint: {
+          "fill-color": "#FF0000",
+          "fill-opacity": 0.7,
+          "fill-outline-color": "#FF0000"
+        }
       });
 
       // Identify a label layer for proper insertion.
