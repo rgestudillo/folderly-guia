@@ -53,7 +53,6 @@ export function OverviewTab({ projectData }: OverviewTabProps) {
   // Get the calculated overall score
   const calculatedOverallScore = calculateOverallScore();
 
-  console.log(projectData);
   const getScoreColor = (score: number) => {
     if (score >= 7.5)
       return "bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800";
