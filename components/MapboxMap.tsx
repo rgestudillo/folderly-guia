@@ -28,6 +28,28 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const centerMarkerRef = useRef<mapboxgl.Marker | null>(null);
+  // Add state to track layer visibility
+  const [customLayerVisible, setCustomLayerVisible] = useState(false);
+
+  // Add keyboard event handler
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === 'k') {
+        setCustomLayerVisible(prev => !prev);
+
+        if (mapRef.current && mapRef.current.getLayer('custom-tileset-layer')) {
+          const visibility = !customLayerVisible ? 'visible' : 'none';
+          mapRef.current.setLayoutProperty('custom-tileset-layer', 'visibility', visibility);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [customLayerVisible]);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -138,12 +160,15 @@ const MapboxMap: React.FC<MapboxMapProps> = ({
         },
       });
 
-      // Add custom tileset layer
+      // Add custom tileset layer - initially hidden
       map.addLayer({
         id: "custom-tileset-layer",
         type: "fill",
         source: "custom-tileset",
         "source-layer": "PH072200000_FH_5yr-3zjmex",
+        layout: {
+          visibility: "none" // Start with the layer hidden
+        },
         paint: {
           "fill-color": "#FF0000",
           "fill-opacity": 0.7,

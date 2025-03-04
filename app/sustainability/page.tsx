@@ -246,7 +246,7 @@ export default function SustainabilityPage() {
               </div>
               <Slider
                 value={[projectData.radius]}
-                max={300}
+                max={2000}
                 min={0}
                 step={25}
                 onValueChange={handleRadiusChange}
