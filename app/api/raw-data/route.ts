@@ -6,7 +6,6 @@ import { handleSoilData } from '@/lib/api/2_bio_ecosystem_data/soil-data';
 import { handleNearbyPlaceCounts } from '@/lib/nearby-places';
 import { handleWeatherStatistics } from '@/lib/api/1_climate_weather_data/weather-statistics';
 import { handleNASAPowerDailyGet } from '@/lib/api/1_climate_weather_data/nasa-power-daily';
-import { handlePollenGet } from '@/lib/api/3_disaster_risk_hazard_data/pollen';
 import { handleDisasterGet } from '@/lib/api/3_disaster_risk_hazard_data/disaster';
 import { handleOverpassGet } from '@/lib/api/5_renewable_infrastructure_data/overpass';
 
@@ -33,7 +32,6 @@ export async function POST(request: Request) {
             nearbyPlacesData,
             weatherData,
             dailyClimateData,
-            pollenData,
             disasterData,
             overpassData
         ] = await Promise.all([
@@ -44,7 +42,6 @@ export async function POST(request: Request) {
             handleNearbyPlaceCounts(latitude, longitude, radius),
             handleWeatherStatistics(latitude, longitude),
             handleNASAPowerDailyGet(latitude, longitude),
-            handlePollenGet(latitude, longitude),
             handleDisasterGet(latitude, longitude),
             handleOverpassGet(latitude, longitude, radius)
         ]);
@@ -58,7 +55,6 @@ export async function POST(request: Request) {
             nearbyPlaces: nearbyPlacesData,
             weather: weatherData,
             climateData: dailyClimateData,
-            pollen: pollenData,
             disasters: disasterData,
             infrastructure: overpassData
         });
