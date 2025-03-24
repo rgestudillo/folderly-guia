@@ -20,7 +20,7 @@ export default function Home() {
   const router = useRouter();
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const MAX_IDEA_LENGTH = 500;
+  const MAX_IDEA_LENGTH = 5000;
 
   useEffect(() => {
     loadGoogleMapsApi().then(() => initAutocomplete());
